@@ -12,13 +12,13 @@ import { useEffect, useState } from 'react';
 import {
 	Footer,
 	Header,
-	TooltipProvider,
 	Toast,
 	ToastClose,
 	ToastDescription,
 	ToastProvider,
 	ToastTitle,
 	ToastViewport,
+	TooltipProvider,
 } from '@/components';
 import appCss from '../styles/app.css?url';
 

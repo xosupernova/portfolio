@@ -2,7 +2,7 @@
  *  © 2025 Nova Bowley. All rights reserved.
  */
 import { createFileRoute } from '@tanstack/react-router';
-import { Typing, NowPlaying } from '@/components';
+import { NowPlaying, Typing } from '@/components';
 
 function NowPlayingHome() {
 	return (

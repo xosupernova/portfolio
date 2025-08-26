@@ -6,7 +6,7 @@ import { useForm } from '@tanstack/react-form';
 import { useState } from 'react';
 import { z } from 'zod';
 import type { TurnstileStatus } from '@/components';
-import { TurnstileWidget, Button, Input, Label, Textarea } from '@/components';
+import { Button, Input, Label, Textarea, TurnstileWidget } from '@/components';
 
 interface ContactFormProps {
 	turnstileSiteKey?: string;

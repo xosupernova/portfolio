@@ -4,17 +4,17 @@
 import { Icon } from '@iconify/react';
 import { Link } from '@tanstack/react-router';
 import {
-	MobileThemeButton,
-	ThemeToggle,
 	Dialog,
 	DialogContent,
+	DialogTrigger,
+	MobileThemeButton,
 	NavigationMenu,
 	NavigationMenuItem,
 	NavigationMenuLink,
 	NavigationMenuList,
-	DialogTrigger,
+	ThemeToggle,
 } from '@/components';
-import { env } from '../env';
+import { env } from '@/env';
 
 export const NAV_ITEMS = [
 	{ to: '/', icon: 'line-md:home', label: 'Home' },
