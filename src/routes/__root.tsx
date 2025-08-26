@@ -1,12 +1,7 @@
 /**
  *  © 2025 Nova Bowley. All rights reserved.
  */
-import {
-	createRootRoute,
-	HeadContent,
-	Scripts,
-	useMatches,
-} from '@tanstack/react-router';
+import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { useEffect, useState } from 'react';
 import {
@@ -24,6 +19,7 @@ import appCss from '../styles/app.css?url';
 
 export const Route = createRootRoute({
 	head: () => ({
+		title: 'Nova Bowley',
 		meta: [
 			{ charSet: 'utf-8' },
 			{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -31,27 +27,144 @@ export const Route = createRootRoute({
 		links: [{ rel: 'stylesheet', href: appCss }],
 	}),
 	shellComponent: RootDocument,
-	// biome-ignore lint/suspicious/noExplicitAny: false positive
+	// biome-ignore lint/suspicious/noExplicitAny: dynamic error prop per router api
 	notFoundComponent: (props: any) => {
 		const status = props?.error?.status || 404;
 		const statusText = props?.error?.statusText || 'Not Found';
-		const dogImg = `https://http.dog/${status}.jpg`;
+
+		interface MemePost {
+			id: string;
+			title: string;
+			url: string;
+			permalink: string;
+		}
+
+		interface RedditChildData {
+			id: string;
+			title: string;
+			url?: string;
+			permalink: string;
+			over_18: boolean;
+			preview?: {
+				images: Array<{
+					source: { url: string };
+				}>;
+			};
+			post_hint?: string;
+		}
+
+		interface RedditListing {
+			data?: {
+				children?: Array<{ data?: RedditChildData }>;
+			};
+		}
+
+		const [meme, setMeme] = useState<MemePost | null>(null);
+		const [loading, setLoading] = useState(true);
+		const [error, setError] = useState<string | null>(null);
+
+		useEffect(() => {
+			let aborted = false;
+			(async () => {
+				try {
+					setLoading(true);
+					setError(null);
+					// Fetch a batch of hot posts then pick a random SFW image
+					const res = await fetch(
+						'https://www.reddit.com/r/GreatBritishMemes/hot.json?limit=50',
+						{ headers: { Accept: 'application/json' } },
+					);
+					if (!res.ok) throw new Error(`HTTP ${res.status}`);
+					const json: RedditListing = await res.json();
+					const rawChildren = json?.data?.children ?? [];
+					const candidates: MemePost[] = rawChildren
+						.map((c) => c.data)
+						.filter((d): d is RedditChildData => !!d && !d.over_18)
+						.filter(
+							(d) =>
+								/\.(png|jpe?g|gif|webp)$/i.test(d.url || '') ||
+								(d.post_hint === 'image' && !!d.preview?.images?.length),
+						)
+						.map((d) => {
+							let imageUrl: string | undefined = d.url;
+							if (!imageUrl || !/\.(png|jpe?g|gif|webp)$/i.test(imageUrl)) {
+								const first = d.preview?.images?.[0]?.source?.url;
+								if (first) imageUrl = first.replace(/&amp;/g, '&');
+							}
+							return {
+								id: d.id,
+								title: d.title,
+								url: imageUrl || '',
+								permalink: `https://reddit.com${d.permalink}`,
+							};
+						});
+					if (candidates.length) {
+						const pick = candidates[Math.floor(Math.random() * candidates.length)];
+						if (!aborted) setMeme(pick);
+					} else if (!aborted) {
+						setError('No meme images found.');
+					}
+				} catch (e: unknown) {
+					if (!aborted)
+						setError(
+							typeof e === 'object' && e && 'message' in e
+								? String((e as { message?: string }).message)
+							: 'Failed to load meme',
+						);
+				} finally {
+					if (!aborted) setLoading(false);
+				}
+			})();
+			return () => {
+				aborted = true;
+			};
+		}, []);
+
+		const fallbackDog = `https://http.dog/${status}.jpg`;
+
 		return (
-			<div className="flex flex-col items-center justify-center min-h-screen text-center">
+			<div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
 				<h1 className="text-4xl font-bold mb-4">
 					{status} - {statusText}
 				</h1>
-				<p className="mb-4">
-					Uh oh! You hit a page that doesn't exist or something went wrong.
+				<p className="mb-4 max-w-prose">
+					Uh oh! You hit a page that doesn't exist or something went wrong. Here's a random British meme instead.
 				</p>
-				<img
-					src={dogImg}
-					alt={`HTTP ${status} Dog`}
-					className="rounded shadow mb-6 max-w-xs mx-auto"
-					style={{ maxHeight: 300 }}
-				/>
+				<div className="mb-6 w-full max-w-md flex flex-col items-center">
+					{loading && (
+						<div className="animate-pulse h-64 w-full rounded bg-neutral-200 dark:bg-neutral-800" />
+					)}
+					{!loading && meme && !error && (
+						<a
+							href={meme.permalink}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="group"
+						>
+							<img
+								src={meme.url}
+								alt={meme.title}
+								className="rounded shadow mb-3 max-h-96 w-auto mx-auto group-hover:scale-[1.02] transition-transform"
+								loading="lazy"
+							/>
+							<p className="text-xs text-neutral-600 dark:text-neutral-400 truncate max-w-md px-2">
+								{meme.title}
+							</p>
+						</a>
+					)}
+					{!loading && (error || (!meme && !error)) && (
+						<img
+							src={fallbackDog}
+							alt={`HTTP ${status} Dog`}
+							className="rounded shadow mb-3 max-h-80 w-auto mx-auto"
+						/>
+					)}
+					{error && (
+						<p className="text-xs text-red-500 mb-2">{error}</p>
+					)}
+				</div>
 				<p className="mb-8 text-lg font-mono">
-					Even the dog can't find this page.
+					{meme ? 'At least the meme made it here.' : 'Even the dog cannot find this page.'}
 				</p>
 				<a href="/" className="text-blue-500 underline">
 					Go Home
@@ -62,25 +175,7 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-	const matches = useMatches();
-	let pageTitle = 'Nova Bowley';
-	for (let i = matches.length - 1; i >= 0; i--) {
-		// biome-ignore lint/suspicious/noExplicitAny: dynamic route meta resolution
-		const m: any = matches[i];
-		// biome-ignore lint/suspicious/noExplicitAny: dynamic route meta resolution
-		const r: any = m?.routeContext?.route || m?.route;
-		const headFn = r?.options?.head;
-		try {
-			const h =
-				typeof headFn === 'function'
-					? headFn({ params: m.params, matches })
-					: null;
-			if (h?.title) {
-				pageTitle = h.title;
-				break;
-			}
-		} catch {}
-	}
+// RootDocument now relies on HeadContent to render titles provided by route head() functions.
 	// Toast state for contact success
 	const [open, setOpen] = useState(false);
 	const [contactName, setContactName] = useState<string | null>(null);
@@ -98,7 +193,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<head>
-				<title>{pageTitle}</title>
 				<HeadContent />
 				<script
 					// biome-ignore lint/security/noDangerouslySetInnerHtml: needed for early theme set
