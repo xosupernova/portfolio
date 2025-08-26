@@ -1,10 +1,22 @@
 /**
-*  © 2025 Nova Bowley. All rights reserved.
-*/
-import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router';
+ *  © 2025 Nova Bowley. All rights reserved.
+ */
+import {
+	createRootRoute,
+	HeadContent,
+	Scripts,
+	useMatches,
+} from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { useEffect, useState } from 'react';
-import { ToastProvider, ToastViewport, Toast, ToastTitle, ToastDescription, ToastClose } from '@/components/ui/toast';
+import {
+	Toast,
+	ToastClose,
+	ToastDescription,
+	ToastProvider,
+	ToastTitle,
+	ToastViewport,
+} from '@/components/ui/toast';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Footer } from '../components/Footer';
 import Header from '../components/Header';
@@ -49,8 +61,6 @@ export const Route = createRootRoute({
 	},
 });
 
-import { useMatches } from '@tanstack/react-router';
-
 function RootDocument({ children }: { children: React.ReactNode }) {
 	const matches = useMatches();
 	let pageTitle = 'Nova Bowley';
@@ -81,7 +91,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			setOpen(true);
 		}
 		window.addEventListener('contact:success', onSuccess as EventListener);
-		return () => window.removeEventListener('contact:success', onSuccess as EventListener);
+		return () =>
+			window.removeEventListener('contact:success', onSuccess as EventListener);
 	}, []);
 
 	return (

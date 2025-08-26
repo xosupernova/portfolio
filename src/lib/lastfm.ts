@@ -1,6 +1,6 @@
 /**
-*  © 2025 Nova Bowley. All rights reserved.
-*/
+ *  © 2025 Nova Bowley. All rights reserved.
+ */
 const API_KEY = import.meta.env.VITE_LASTFM_API_KEY;
 const USER = import.meta.env.VITE_LASTFM_USER;
 

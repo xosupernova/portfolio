@@ -1,6 +1,6 @@
 /**
-*  © 2025 Nova Bowley. All rights reserved.
-*/
+ *  © 2025 Nova Bowley. All rights reserved.
+ */
 import * as Sentry from '@sentry/tanstackstart-react';
 import {
 	createMiddleware,

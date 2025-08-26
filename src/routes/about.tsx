@@ -1,6 +1,6 @@
 /**
-*  © 2025 Nova Bowley. All rights reserved.
-*/
+ *  © 2025 Nova Bowley. All rights reserved.
+ */
 import { Icon } from '@iconify/react';
 import { createFileRoute } from '@tanstack/react-router';
 
@@ -155,9 +155,18 @@ function RouteComponent() {
 						loading="lazy"
 					/>
 				</div>
-				<ul className="list-disc pl-6 space-y-3 text-lg marker:text-indigo-500 dark:marker:text-indigo-400">
+				<ul className="pl-1 space-y-3 text-lg">
 					{bullets.map((b) => (
-						<li key={b}>{b}</li>
+						<li key={b} className="flex items-start gap-3">
+							<Icon
+								icon="mdi:shark"
+								className="mt-1 size-6 text-sky-600 dark:text-sky-400"
+								aria-hidden="true"
+							/>
+							<span className="leading-snug font-medium text-slate-800 dark:text-slate-200">
+								{b}
+							</span>
+						</li>
 					))}
 				</ul>
 			</div>

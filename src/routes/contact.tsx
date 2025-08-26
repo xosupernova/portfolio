@@ -1,6 +1,6 @@
 /**
-*  © 2025 Nova Bowley. All rights reserved.
-*/
+ *  © 2025 Nova Bowley. All rights reserved.
+ */
 import { Icon } from '@iconify/react';
 import { createFileRoute } from '@tanstack/react-router';
 import { ContactForm } from '@/components/ContactForm';

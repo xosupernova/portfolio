@@ -1,6 +1,6 @@
 /**
-*  © 2025 Nova Bowley. All rights reserved.
-*/
+ *  © 2025 Nova Bowley. All rights reserved.
+ */
 export function makeHead({
 	title,
 	description,

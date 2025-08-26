@@ -1,6 +1,6 @@
 /**
-*  © 2025 Nova Bowley. All rights reserved.
-*/
+ *  © 2025 Nova Bowley. All rights reserved.
+ */
 
 import * as SwitchPrimitive from '@radix-ui/react-switch';
 import type * as React from 'react';

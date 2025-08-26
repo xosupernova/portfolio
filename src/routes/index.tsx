@@ -1,6 +1,6 @@
 /**
-*  © 2025 Nova Bowley. All rights reserved.
-*/
+ *  © 2025 Nova Bowley. All rights reserved.
+ */
 import { createFileRoute } from '@tanstack/react-router';
 import { NowPlaying } from '../components/NowPlaying';
 import { Typing } from '../components/typing';

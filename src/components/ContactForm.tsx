@@ -1,6 +1,6 @@
 /**
-*  © 2025 Nova Bowley. All rights reserved.
-*/
+ *  © 2025 Nova Bowley. All rights reserved.
+ */
 import { Icon } from '@iconify/react';
 import { useForm } from '@tanstack/react-form';
 import { useState } from 'react';

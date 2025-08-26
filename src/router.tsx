@@ -1,6 +1,6 @@
 /**
-*  © 2025 Nova Bowley. All rights reserved.
-*/
+ *  © 2025 Nova Bowley. All rights reserved.
+ */
 import { createRouter as createTanstackRouter } from '@tanstack/react-router';
 
 // Import the generated route tree

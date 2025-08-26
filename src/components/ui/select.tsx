@@ -1,6 +1,6 @@
 /**
-*  © 2025 Nova Bowley. All rights reserved.
-*/
+ *  © 2025 Nova Bowley. All rights reserved.
+ */
 import { Icon } from '@iconify/react';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import type { ComponentProps } from 'react';

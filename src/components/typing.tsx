@@ -1,6 +1,6 @@
 /**
-*  © 2025 Nova Bowley. All rights reserved.
-*/
+ *  © 2025 Nova Bowley. All rights reserved.
+ */
 import { useEffect, useRef } from 'react';
 import Typed from 'typed.js';
 import { env } from '../env';
