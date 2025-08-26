@@ -9,7 +9,8 @@ import {
 } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { useEffect, useState } from 'react';
-import { Footer,
+import {
+	Footer,
 	Header,
 	TooltipProvider,
 	Toast,
@@ -18,7 +19,7 @@ import { Footer,
 	ToastProvider,
 	ToastTitle,
 	ToastViewport,
- } from '@/components';
+} from '@/components';
 import appCss from '../styles/app.css?url';
 
 export const Route = createRootRoute({

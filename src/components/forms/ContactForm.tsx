@@ -227,11 +227,11 @@ export function ContactForm({
 					type="submit"
 					disabled={Boolean(
 						!form.state.canSubmit ||
-						form.state.isSubmitting ||
-						(turnstileSiteKey &&
-							!turnstileBypass &&
-							turnstileStatus === 'rendered' &&
-							!turnstileToken),
+							form.state.isSubmitting ||
+							(turnstileSiteKey &&
+								!turnstileBypass &&
+								turnstileStatus === 'rendered' &&
+								!turnstileToken),
 					)}
 					className="min-w-40 relative"
 				>
