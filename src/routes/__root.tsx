@@ -1,0 +1,92 @@
+/**
+*  © 2025 Nova Bowley. All rights reserved.
+*/
+import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router';
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import { Footer } from '../components/Footer';
+import Header from '../components/Header';
+import appCss from '../styles/app.css?url';
+
+export const Route = createRootRoute({
+	head: () => ({
+		meta: [
+			{ charSet: 'utf-8' },
+			{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
+		],
+		links: [{ rel: 'stylesheet', href: appCss }],
+	}),
+	shellComponent: RootDocument,
+	// biome-ignore lint/suspicious/noExplicitAny: false positive
+	notFoundComponent: (props: any) => {
+		const status = props?.error?.status || 404;
+		const statusText = props?.error?.statusText || 'Not Found';
+		const dogImg = `https://http.dog/${status}.jpg`;
+		return (
+			<div className="flex flex-col items-center justify-center min-h-screen text-center">
+				<h1 className="text-4xl font-bold mb-4">
+					{status} - {statusText}
+				</h1>
+				<p className="mb-4">
+					Uh oh! You hit a page that doesn't exist or something went wrong.
+				</p>
+				<img
+					src={dogImg}
+					alt={`HTTP ${status} Dog`}
+					className="rounded shadow mb-6 max-w-xs mx-auto"
+					style={{ maxHeight: 300 }}
+				/>
+				<p className="mb-8 text-lg font-mono">
+					Even the dog can't find this page.
+				</p>
+				<a href="/" className="text-blue-500 underline">
+					Go Home
+				</a>
+			</div>
+		);
+	},
+});
+
+import { useMatches } from '@tanstack/react-router';
+
+function RootDocument({ children }: { children: React.ReactNode }) {
+	const matches = useMatches();
+	let pageTitle = 'Nova Bowley';
+	for (let i = matches.length - 1; i >= 0; i--) {
+		// biome-ignore lint/suspicious/noExplicitAny: dynamic route meta resolution
+		const m: any = matches[i];
+		// biome-ignore lint/suspicious/noExplicitAny: dynamic route meta resolution
+		const r: any = m?.routeContext?.route || m?.route;
+		const headFn = r?.options?.head;
+		try {
+			const h =
+				typeof headFn === 'function'
+					? headFn({ params: m.params, matches })
+					: null;
+			if (h?.title) {
+				pageTitle = h.title;
+				break;
+			}
+		} catch {}
+	}
+	return (
+		<html lang="en" suppressHydrationWarning>
+			<head>
+				<title>{pageTitle}</title>
+				<HeadContent />
+				<script
+					// biome-ignore lint/security/noDangerouslySetInnerHtml: needed for early theme set
+					dangerouslySetInnerHTML={{
+						__html: `(() => {try {const m = document.cookie.match(/(?:^|; )theme=([^;]+)/);const theme = m?decodeURIComponent(m[1]):null;const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;const wantDark = theme ? theme === 'dark' : prefersDark;document.documentElement.classList.toggle('dark', wantDark);} catch(e) {}})();`,
+					}}
+				/>
+			</head>
+			<body className="min-h-screen flex flex-col text-black dark:text-white bg-gradient-to-br from-gray-50 via-white to-gray-200 dark:bg-gradient-to-br dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800">
+				<Header />
+				<main className="flex-1 w-full pb-40">{children}</main>
+				<Footer />
+				<TanStackRouterDevtools />
+				<Scripts />
+			</body>
+		</html>
+	);
+}

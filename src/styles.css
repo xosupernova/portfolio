@@ -1,0 +1,82 @@
+/*
+  © 2025 Nova Bowley. All rights reserved.
+*/
+/* Now Playing modern card style */
+@import url("https://fonts.googleapis.com/css2?family=Google+Sans+Code:wght@400;700&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+
+.now-playing {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	background: #181818;
+	padding: 10px 15px;
+	border-radius: 8px;
+	color: white;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	max-width: 400px;
+	width: auto;
+	height: auto;
+	box-shadow:
+		0 10px 15px -3px rgba(0, 0, 0, 0.1),
+		0 4px 6px rgba(0, 0, 0, 0.1);
+	z-index: 10;
+}
+
+code {
+	font-family:
+		source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+@layer base {
+	html {
+		font-family: "Google Sans Code", ui-sans-serif, system-ui, sans-serif;
+		-webkit-font-smoothing: antialiased;
+		text-rendering: optimizeLegibility;
+	}
+	* {
+		border-color: var(--color-border);
+		outline-color: color-mix(in srgb, var(--color-ring) 50%, transparent);
+	}
+}
+
+@keyframes marquee {
+	0% {
+		transform: translateX(0);
+	}
+	100% {
+		transform: translateX(-50%);
+	}
+}
+
+@keyframes marquee-slide {
+	0% {
+		transform: translateX(0);
+	}
+	100% {
+		transform: translateX(-100%);
+	}
+}
+
+@layer utilities {
+	.animate-marquee {
+		animation: marquee 18s linear infinite;
+	}
+	.marquee {
+		display: flex;
+		overflow: hidden;
+		position: relative;
+		width: 100%;
+	}
+	.marquee-track {
+		display: flex;
+		flex-shrink: 0;
+		animation: marquee-slide 28s linear infinite;
+	}
+	.marquee-reverse .marquee-track {
+		animation-direction: reverse;
+	}
+}
