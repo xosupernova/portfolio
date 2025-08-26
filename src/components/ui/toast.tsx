@@ -5,6 +5,7 @@
 
 import { Icon } from '@iconify/react';
 import * as ToastPrimitives from '@radix-ui/react-toast';
+import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
@@ -24,16 +25,34 @@ export const ToastViewport = React.forwardRef<
 ));
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
 
+const toastVariants = cva(
+	'group pointer-events-auto relative flex w-full items-start gap-3 overflow-hidden rounded-md border p-4 pr-10 text-sm shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/75 data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=open]:fade-in data-[state=closed]:fade-out data-[state=open]:slide-in-from-bottom-full data-[state=closed]:slide-out-to-bottom-full',
+	{
+		variants: {
+			variant: {
+				default: 'bg-background/95 border-border before:hidden',
+				success:
+					'bg-emerald-600/15 dark:bg-emerald-500/10 text-emerald-900 dark:text-emerald-100 border-emerald-500/40 before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-emerald-500',
+				error:
+					'bg-rose-600/15 dark:bg-rose-500/10 text-rose-900 dark:text-rose-100 border-rose-500/40 before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-rose-500',
+				info: 'bg-sky-600/15 dark:bg-sky-500/10 text-sky-900 dark:text-sky-100 border-sky-500/40 before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-sky-500',
+			},
+		},
+		defaultVariants: { variant: 'default' },
+	},
+);
+
+export interface ToastProps
+	extends React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root>,
+		VariantProps<typeof toastVariants> {}
+
 const ToastRoot = React.forwardRef<
 	React.ElementRef<typeof ToastPrimitives.Root>,
-	React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root>
->(({ className, ...props }, ref) => (
+	ToastProps
+>(({ className, variant, ...props }, ref) => (
 	<ToastPrimitives.Root
 		ref={ref}
-		className={cn(
-			'group pointer-events-auto relative flex w-full items-start gap-3 overflow-hidden rounded-md border bg-background/95 p-4 pr-10 text-sm shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/75 data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=open]:fade-in data-[state=closed]:fade-out data-[state=open]:slide-in-from-bottom-full data-[state=closed]:slide-out-to-bottom-full',
-			className,
-		)}
+		className={cn(toastVariants({ variant }), className)}
 		{...props}
 	/>
 ));

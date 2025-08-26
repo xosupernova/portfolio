@@ -115,9 +115,28 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 						<Footer />
 						<TanStackRouterDevtools />
 						<Scripts />
-						<Toast open={open} onOpenChange={setOpen} duration={4000}>
-							<ToastTitle>Message Sent</ToastTitle>
-							<ToastDescription>
+						<Toast
+							variant="success"
+							open={open}
+							onOpenChange={setOpen}
+							duration={4500}
+						>
+							<ToastTitle className="flex items-center font-semibold">
+								<span className="inline-flex items-center justify-center mr-2 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 size-6">
+									<svg
+										viewBox="0 0 24 24"
+										className="size-4"
+										aria-hidden="true"
+									>
+										<path
+											fill="currentColor"
+											d="M9.55 17.6 4.3 12.35l1.4-1.4 3.85 3.85 8.75-8.75 1.4 1.4Z"
+										/>
+									</svg>
+								</span>
+								Message Sent
+							</ToastTitle>
+							<ToastDescription className="text-emerald-700 dark:text-emerald-200">
 								Thanks{contactName ? `, ${contactName}` : ''}! I'll reply soon.
 							</ToastDescription>
 							<ToastClose />
