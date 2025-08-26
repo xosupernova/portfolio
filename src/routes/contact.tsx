@@ -3,7 +3,7 @@
  */
 import { Icon } from '@iconify/react';
 import { createFileRoute } from '@tanstack/react-router';
-import { ContactForm } from '@/components/ContactForm';
+import { ContactForm } from '@/components';
 import { env } from '@/env';
 
 function RouteComponent() {

@@ -10,7 +10,7 @@ import {
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import Header from '@/components/Header';
+import { Header } from '@/components';
 import {
 	Dialog,
 	DialogContent,

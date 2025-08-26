@@ -2,7 +2,7 @@
  *  © 2025 Nova Bowley. All rights reserved.
  */
 import * as React from 'react';
-import { fetchNowPlaying } from '../lib/lastfm';
+import { fetchNowPlaying } from '@/lib/lastfm';
 
 export type Track = {
 	artist: string;

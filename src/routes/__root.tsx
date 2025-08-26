@@ -9,17 +9,16 @@ import {
 } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { useEffect, useState } from 'react';
-import {
+import { Footer,
+	Header,
+	TooltipProvider,
 	Toast,
 	ToastClose,
 	ToastDescription,
 	ToastProvider,
 	ToastTitle,
 	ToastViewport,
-} from '@/components/ui/toast';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { Footer } from '../components/Footer';
-import Header from '../components/Header';
+ } from '@/components';
 import appCss from '../styles/app.css?url';
 
 export const Route = createRootRoute({

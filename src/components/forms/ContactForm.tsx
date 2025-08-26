@@ -5,12 +5,8 @@ import { Icon } from '@iconify/react';
 import { useForm } from '@tanstack/react-form';
 import { useState } from 'react';
 import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import type { TurnstileStatus } from './TurnstileWidget';
-import { TurnstileWidget } from './TurnstileWidget';
+import type { TurnstileStatus } from '@/components';
+import { TurnstileWidget, Button, Input, Label, Textarea } from '@/components';
 
 interface ContactFormProps {
 	turnstileSiteKey?: string;
@@ -231,11 +227,11 @@ export function ContactForm({
 					type="submit"
 					disabled={Boolean(
 						!form.state.canSubmit ||
-							form.state.isSubmitting ||
-							(turnstileSiteKey &&
-								!turnstileBypass &&
-								turnstileStatus === 'rendered' &&
-								!turnstileToken),
+						form.state.isSubmitting ||
+						(turnstileSiteKey &&
+							!turnstileBypass &&
+							turnstileStatus === 'rendered' &&
+							!turnstileToken),
 					)}
 					className="min-w-40 relative"
 				>

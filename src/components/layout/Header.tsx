@@ -8,13 +8,13 @@ import {
 	ThemeToggle,
 	Dialog,
 	DialogContent,
+	DialogTrigger,
 	NavigationMenu,
 	NavigationMenuItem,
 	NavigationMenuLink,
 	NavigationMenuList,
-	DialogTrigger,
 } from '@/components';
-import { env } from '../env';
+import { env } from '@/env';
 
 export const NAV_ITEMS = [
 	{ to: '/', icon: 'line-md:home', label: 'Home' },

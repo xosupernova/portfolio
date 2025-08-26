@@ -3,7 +3,7 @@
  */
 import { useEffect, useRef } from 'react';
 import Typed from 'typed.js';
-import { env } from '../env';
+import { env } from '@/env';
 
 // ...removed old Typing function...
 export function Typing() {
