@@ -69,6 +69,10 @@ export function ContactForm({
 					return;
 				}
 				setSubmitted(true);
+				// Fire a custom event so a global toast handler can listen
+				window.dispatchEvent(
+					new CustomEvent('contact:success', { detail: { name: value.name } }),
+				);
 				setTimeout(() => setSubmitted(false), 5000);
 				formApi.reset();
 				setTurnstileToken(null);
@@ -254,15 +258,7 @@ export function ContactForm({
 					setToken={setTurnstileToken}
 					className="w-full space-y-1"
 				/>
-				{submitted && !errorMsg && (
-					<span className="inline-flex items-center gap-2 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 px-4 py-1.5 text-sm font-medium border border-green-500/30 animate-in fade-in">
-						<Icon
-							icon="line-md:circle-to-confirm-circle-transition"
-							className="text-lg"
-						/>{' '}
-						Sent!
-					</span>
-				)}
+				{/* Success toast now handled globally */}
 				{errorMsg && (
 					<span className="inline-flex items-center gap-2 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400 px-4 py-1.5 text-sm font-medium border border-rose-500/30 animate-in fade-in max-w-full">
 						<Icon icon="line-md:alert" className="text-lg" /> {errorMsg}

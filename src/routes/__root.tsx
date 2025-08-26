@@ -3,6 +3,9 @@
 */
 import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import { useEffect, useState } from 'react';
+import { ToastProvider, ToastViewport, Toast, ToastTitle, ToastDescription, ToastClose } from '@/components/ui/toast';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { Footer } from '../components/Footer';
 import Header from '../components/Header';
 import appCss from '../styles/app.css?url';
@@ -68,6 +71,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			}
 		} catch {}
 	}
+	// Toast state for contact success
+	const [open, setOpen] = useState(false);
+	const [contactName, setContactName] = useState<string | null>(null);
+	useEffect(() => {
+		function onSuccess(e: Event) {
+			const detail = (e as CustomEvent).detail as { name?: string } | undefined;
+			setContactName(detail?.name || null);
+			setOpen(true);
+		}
+		window.addEventListener('contact:success', onSuccess as EventListener);
+		return () => window.removeEventListener('contact:success', onSuccess as EventListener);
+	}, []);
+
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<head>
@@ -76,16 +92,28 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<script
 					// biome-ignore lint/security/noDangerouslySetInnerHtml: needed for early theme set
 					dangerouslySetInnerHTML={{
-						__html: `(() => {try {const m = document.cookie.match(/(?:^|; )theme=([^;]+)/);const theme = m?decodeURIComponent(m[1]):null;const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;const wantDark = theme ? theme === 'dark' : prefersDark;document.documentElement.classList.toggle('dark', wantDark);} catch(e) {}})();`,
+						__html: `(() => {try {const m=document.cookie.match(/(?:^|; )theme=([^;]+)/);const raw=m?decodeURIComponent(m[1]):null;const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;let wantDark=prefersDark;if(raw==='light') wantDark=false; else if(raw==='dark') wantDark=true; document.documentElement.classList.toggle('dark',wantDark);}catch(e){}})();`,
 					}}
 				/>
 			</head>
 			<body className="min-h-screen flex flex-col text-black dark:text-white bg-gradient-to-br from-gray-50 via-white to-gray-200 dark:bg-gradient-to-br dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800">
-				<Header />
-				<main className="flex-1 w-full pb-40">{children}</main>
-				<Footer />
-				<TanStackRouterDevtools />
-				<Scripts />
+				<TooltipProvider delayDuration={200}>
+					<ToastProvider swipeDirection="right">
+						<Header />
+						<main className="flex-1 w-full pb-40">{children}</main>
+						<Footer />
+						<TanStackRouterDevtools />
+						<Scripts />
+						<Toast open={open} onOpenChange={setOpen} duration={4000}>
+							<ToastTitle>Message Sent</ToastTitle>
+							<ToastDescription>
+								Thanks{contactName ? `, ${contactName}` : ''}! I'll reply soon.
+							</ToastDescription>
+							<ToastClose />
+						</Toast>
+						<ToastViewport />
+					</ToastProvider>
+				</TooltipProvider>
 			</body>
 		</html>
 	);
