@@ -9,6 +9,8 @@ export const env = createEnv({
 		SERVER_URL: z.string().url().optional(),
 		DISCORD_WEBHOOK: z.string().url().optional(),
 		TURNSTILE_SECRET: z.string().min(1).optional(),
+		LASTFM_API_KEY: z.string().min(1).optional(),
+		LASTFM_USER: z.string().min(1).optional(),
 	},
 
 	/**
@@ -22,6 +24,10 @@ export const env = createEnv({
 		VITE_APP_DESCRIPTION: z.string().min(1),
 		VITE_APP_AUTHOR: z.string().min(1),
 		VITE_APP_AUTHOR_SHORT: z.string().min(1),
+		VITE_ENABLE_SENTRY: z.string().optional(),
+		VITE_ENABLE_SENTRY_REPLAY: z.string().optional(),
+		VITE_DISABLE_STRICT_MODE: z.string().optional(),
+		VITE_ENABLE_DEVTOOLS: z.string().optional(),
 
 		// Discord
 		VITE_DISCORD_WEBHOOK: z.string().url().optional(),

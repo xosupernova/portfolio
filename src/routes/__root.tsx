@@ -1,7 +1,11 @@
 /**
  *  © 2025 Nova Bowley. All rights reserved.
  */
-import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router';
+import  { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router';
+
+// Allow Vite define replacement for SPA build guard
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+declare const __SPA_BUILD__: boolean | undefined;
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { useEffect, useState } from 'react';
 import {
@@ -15,6 +19,7 @@ import {
 	ToastViewport,
 	TooltipProvider,
 } from '@/components';
+import { env } from '@/env';
 import appCss from '../styles/app.css?url';
 
 export const Route = createRootRoute({
@@ -190,6 +195,49 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			window.removeEventListener('contact:success', onSuccess as EventListener);
 	}, []);
 
+	// Optional diagnostic flag (not in strict schema yet)
+	// Diagnostic minimal flag removed (always render full shell in production SPA)
+	const minimal = false;
+	// In pure SPA build we already have an <html> shell from index.html; avoid nesting in hydration.
+	if (typeof __SPA_BUILD__ !== 'undefined') {
+		return (
+			<div className="min-h-screen flex flex-col text-black dark:text-white bg-gradient-to-br from-gray-50 via-white to-gray-200 dark:bg-gradient-to-br dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800">
+				{/* Head manager (injects per-route meta) */}
+				<HeadContent />
+				{
+					<TooltipProvider delayDuration={200}>
+						<ToastProvider swipeDirection="right">
+							<Header />
+							<main className="flex-1 w-full pb-40">{children}</main>
+							<Footer />
+							{env.VITE_ENABLE_DEVTOOLS === 'true' && <TanStackRouterDevtools />}
+							<Toast
+								variant="success"
+								open={open}
+								onOpenChange={setOpen}
+								duration={4500}
+							>
+								<ToastTitle className="flex items-center font-semibold">
+									<span className="inline-flex items-center justify-center mr-2 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 size-6">
+										<svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
+											<path fill="currentColor" d="M9.55 17.6 4.3 12.35l1.4-1.4 3.85 3.85 8.75-8.75 1.4 1.4Z" />
+										</svg>
+								</span>
+								Message Sent
+							</ToastTitle>
+							<ToastDescription className="text-emerald-700 dark:text-emerald-200">
+								Thanks{contactName ? `, ${contactName}` : ''}! I'll reply soon.
+							</ToastDescription>
+							<ToastClose />
+							</Toast>
+							<ToastViewport />
+						</ToastProvider>
+					</TooltipProvider>
+				}
+			</div>
+		);
+	}
+
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<head>
@@ -202,31 +250,29 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				/>
 			</head>
 			<body className="min-h-screen flex flex-col text-black dark:text-white bg-gradient-to-br from-gray-50 via-white to-gray-200 dark:bg-gradient-to-br dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800">
-				<TooltipProvider delayDuration={200}>
-					<ToastProvider swipeDirection="right">
-						<Header />
-						<main className="flex-1 w-full pb-40">{children}</main>
-						<Footer />
-						<TanStackRouterDevtools />
-						<Scripts />
-						<Toast
-							variant="success"
-							open={open}
-							onOpenChange={setOpen}
-							duration={4500}
-						>
-							<ToastTitle className="flex items-center font-semibold">
-								<span className="inline-flex items-center justify-center mr-2 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 size-6">
-									<svg
-										viewBox="0 0 24 24"
-										className="size-4"
-										aria-hidden="true"
-									>
-										<path
-											fill="currentColor"
-											d="M9.55 17.6 4.3 12.35l1.4-1.4 3.85 3.85 8.75-8.75 1.4 1.4Z"
-										/>
-									</svg>
+				{minimal ? (
+					<main className="flex-1 w-full p-4">
+						<p className="text-sm opacity-70">Diagnostic minimal shell active.</p>
+						{children}
+					</main>
+				) : (
+					<TooltipProvider delayDuration={200}>
+						<ToastProvider swipeDirection="right">
+							<Header />
+							<main className="flex-1 w-full pb-40">{children}</main>
+							<Footer />
+							{env.VITE_ENABLE_DEVTOOLS === 'true' && <TanStackRouterDevtools />}
+							<Toast
+								variant="success"
+								open={open}
+								onOpenChange={setOpen}
+								duration={4500}
+							>
+								<ToastTitle className="flex items-center font-semibold">
+									<span className="inline-flex items-center justify-center mr-2 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 size-6">
+										<svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
+											<path fill="currentColor" d="M9.55 17.6 4.3 12.35l1.4-1.4 3.85 3.85 8.75-8.75 1.4 1.4Z" />
+										</svg>
 								</span>
 								Message Sent
 							</ToastTitle>
@@ -234,10 +280,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 								Thanks{contactName ? `, ${contactName}` : ''}! I'll reply soon.
 							</ToastDescription>
 							<ToastClose />
-						</Toast>
-						<ToastViewport />
-					</ToastProvider>
-				</TooltipProvider>
+							</Toast>
+							<ToastViewport />
+						</ToastProvider>
+					</TooltipProvider>
+				)}
+				<Scripts />
 			</body>
 		</html>
 	);

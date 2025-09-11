@@ -1,0 +1,49 @@
+name = "portfolio"
+# Choose a recent date; update periodically.
+compatibility_date = "2025-08-26"
+
+# For Cloudflare Pages deployment (static assets + Functions API)
+# Vite build outputs to "dist" by default.
+pages_build_output_dir = ".output"
+
+# Functions directory already present: functions/
+# Add a KV binding for rate limiting if you create it (optional)
+# Run: wrangler kv:namespace create RATE_LIMIT_KV
+# Then copy the id below.
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "774fcd06999c4941addc72d16aa46280"
+
+[vars]
+# Any non-secret vars (client-exposed must be prefixed VITE_*)
+VITE_SITE_VERSION = "1.0.0"
+LASTFM_USER = "xo_supernova" # non-secret username for Last.fm proxy
+VITE_APP_TITLE = "Nova Bowley"
+VITE_APP_TITLE_SHORT = "Nova"
+VITE_APP_DESCRIPTION = "Personal portfolio for Nova Bowley"
+VITE_APP_AUTHOR = "Nova Bowley"
+VITE_APP_AUTHOR_SHORT = "Nova"
+VITE_TURNSTILE_SITE_KEY = "" # set if using Turnstile widget
+VITE_SOCIALS_GITHUB = "https://github.com/xosupernova"
+VITE_SOCIALS_DISCORD = "https://discord.com/users/895595833540636682"
+VITE_SOCIALS_EMAIL = "mailto:me@xosupernova.xyz"
+VITE_SOCIALS_X = "https://twitter.com/xosupernova"
+VITE_SOCIALS_INSTAGRAM = "https://instagram.com/xo_supernova"
+VITE_SOCIALS_LINKEDIN = "https://linkedin.com/in/xosupernova"
+VITE_SOCIALS_FACEBOOK = "https://facebook.com/xosupernovaxox"
+VITE_SENTRY_ORG = "xosupernova"
+VITE_SENTRY_PROJECT = "portfolio"
+VITE_SENTRY_DSN = "https://b477dc7179323ca7f8b3920e4d7d4d36@o4509912537038848.ingest.de.sentry.io/4509912552898640" # optional public DSN if you enable client Sentry
+VITE_ENABLE_SENTRY = "true"        # set to "false" to disable all client Sentry
+VITE_ENABLE_SENTRY_REPLAY = "true" # set to "true" to enable Session Replay
+VITE_DISABLE_STRICT_MODE = "false"  # set to "true" to render without React.StrictMode (diagnostics)
+VITE_ENABLE_DEVTOOLS = "false"      # set true to expose TanStack Router devtools in production build
+
+# Secrets (set via: wrangler secret put DISCORD_WEBHOOK, TURNSTILE_SECRET, VITE_SENTRY_AUTH_TOKEN, etc.)
+# DISCORD_WEBHOOK
+# TURNSTILE_SECRET
+# VITE_SENTRY_AUTH_TOKEN
+
+
+# If later moving to a dedicated Worker (SSR), you would replace pages_build_output_dir with a `main` entry pointing
+# to a bundled worker script and remove the [site] block.

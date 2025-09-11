@@ -99,7 +99,7 @@ export function MobileThemeButton() {
 	const { isDark, toggle } = useTheme();
 	return (
 		<button
-			className="h-9 flex-1 inline-flex items-center justify-center gap-2 rounded-md border text-sm font-medium bg-white/70 dark:bg-black/30 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+			className="h-9 flex-1 inline-flex items-center justify-center gap-2 rounded-md border text-sm font-medium bg-white/80 dark:bg-black/30 text-gray-900 dark:text-gray-100 border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 transition-colors"
 			onClick={toggle}
 			type="button"
 		>

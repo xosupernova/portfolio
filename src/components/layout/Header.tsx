@@ -6,6 +6,8 @@ import { Link } from '@tanstack/react-router';
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
+	DialogTitle,
 	DialogTrigger,
 	MobileThemeButton,
 	NavigationMenu,
@@ -75,6 +77,10 @@ export default function Header({ forceDesktop }: HeaderProps) {
 							<Icon icon="line-md:menu" className="size-7" />
 						</DialogTrigger>
 						<DialogContent variant="right" className="px-4 py-6">
+							<DialogTitle className="sr-only">Main navigation</DialogTitle>
+							<DialogDescription className="sr-only">
+								Site menu and theme options
+							</DialogDescription>
 							<nav className="mb-6">
 								<ul className="flex flex-col gap-1">
 									{NAV_ITEMS.map((item) => (

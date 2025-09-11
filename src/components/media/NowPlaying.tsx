@@ -56,15 +56,21 @@ async function lookupItunesArt(artist: string, name: string, album?: string) {
 	return art;
 }
 
+function makeTrackKey(artist: string, name: string, album?: string) {
+	return `${artist}::${name}::${album || ''}`.toLowerCase();
+}
+
 export function NowPlaying() {
 	// Start with empty state so SSR & first client render produce identical HTML.
 	// We'll hydrate from localStorage & network after mount to avoid hydration mismatch.
 	const [hydrated, setHydrated] = React.useState(false);
 	const [track, setTrack] = React.useState<Track | null>(null);
-	const [albumArt, setAlbumArt] = React.useState<string | null>(null);
+	const [albumArtUrl, setAlbumArtUrl] = React.useState<string | null>(null);
+	const [albumArtKey, setAlbumArtKey] = React.useState<string | null>(null);
 	const [loading, setLoading] = React.useState(true);
 	const [imageError, setImageError] = React.useState(false);
 
+	const artKeyRef = React.useRef<string | null>(null);
 	React.useEffect(() => {
 		let isMounted = true;
 		setHydrated(true);
@@ -84,24 +90,39 @@ export function NowPlaying() {
 					setLoading(false);
 				}
 			}
-			const art = localStorage.getItem('nowPlaying:lastAlbumArt');
-			if (art) setAlbumArt(art);
 		} catch {}
 
 		const fetchAndSet = async () => {
 			const data = await fetchNowPlaying();
 			if (!isMounted) return;
 			setTrack(data);
-			let foundArt: string | null = null;
-			if (data && !isValidImage(data.image)) {
-				foundArt = await lookupItunesArt(data.artist, data.name, data.album);
-				if (isMounted) setAlbumArt(foundArt);
-			}
 			setLoading(false);
-			try {
-				localStorage.setItem('nowPlaying:lastTrack', JSON.stringify(data));
-				if (foundArt) localStorage.setItem('nowPlaying:lastAlbumArt', foundArt);
-			} catch {}
+			if (data) {
+				const key = makeTrackKey(data.artist, data.name, data.album);
+				// Reset art/error when track changes
+				if (artKeyRef.current !== key) {
+					setAlbumArtUrl(null);
+					setAlbumArtKey(key);
+					artKeyRef.current = key;
+					setImageError(false);
+					// Attempt to hydrate per-track album art from storage
+					try {
+						const stored = localStorage.getItem(`nowPlaying:albumArt:${key}`);
+						if (stored) setAlbumArtUrl(stored);
+					} catch {}
+				}
+				// Always attempt higher quality iTunes art concurrently
+				void (async () => {
+					const art = await lookupItunesArt(data.artist, data.name, data.album);
+					if (art && isMounted) {
+						setAlbumArtUrl((prev) => prev || art);
+						setAlbumArtKey(key);
+						artKeyRef.current = key;
+						try { localStorage.setItem(`nowPlaying:albumArt:${key}`, art); } catch {}
+					}
+				})();
+			}
+			try { localStorage.setItem('nowPlaying:lastTrack', JSON.stringify(data)); } catch {}
 		};
 
 		fetchAndSet();
@@ -114,14 +135,25 @@ export function NowPlaying() {
 
 	// Render a stable placeholder during SSR & first client render to avoid hydration mismatch.
 	if (!hydrated) {
-		return <div style={{ minHeight: 80 }} />;
+		return <div className="min-h-20" />;
 	}
 
 	if (loading) return <div>Loading now playing…</div>;
 	if (!track) return <div>Not playing anything right now.</div>;
 
-	const imageSrc =
-		!imageError && isValidImage(track.image) ? track.image : albumArt;
+	// Prefer cached / higher-res album art for this track; fallback to Last.fm image (with light cache-busting while now playing)
+	let imageSrc: string | null = null;
+	if (!imageError) {
+		if (albumArtKey && track && albumArtKey === makeTrackKey(track.artist, track.name, track.album) && albumArtUrl) {
+			imageSrc = albumArtUrl;
+		} else if (isValidImage(track.image)) {
+			imageSrc = track.image;
+			if (track.nowPlaying) {
+				const ts = Math.floor(Date.now() / 10000); // change every 10s to align with poll
+				imageSrc += (imageSrc.includes('?') ? '&' : '?') + 'ts=' + ts;
+			}
+		}
+	}
 
 	return (
 		<a
@@ -133,21 +165,12 @@ export function NowPlaying() {
 		>
 			{imageSrc ? (
 				<img
-					src={imageSrc}
+					src={imageSrc || ''}
 					alt={track.album || 'Album Art'}
 					className="w-16 h-16 object-cover rounded shadow"
-					onError={async () => {
-						if (!albumArt) {
-							const art = await lookupItunesArt(
-								track.artist,
-								track.name,
-								track.album,
-							);
-							if (art) {
-								setAlbumArt(art);
-								return;
-							}
-						}
+					loading="lazy"
+					referrerPolicy="no-referrer"
+					onError={() => {
 						setImageError(true);
 					}}
 				/>

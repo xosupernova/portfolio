@@ -5,7 +5,6 @@ export * from './integrations/TurnstileWidget';
 export * from './layout/Footer';
 export * from './layout/Header';
 export { default as Header } from './layout/Header';
-export * from './media/NowPlaying';
 export * from './misc/typing';
 export * from './theme/ThemeToggle';
 export { default as ThemeToggle } from './theme/ThemeToggle';

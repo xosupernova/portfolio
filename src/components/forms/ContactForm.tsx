@@ -13,23 +13,55 @@ interface ContactFormProps {
 	turnstileBypass?: boolean;
 }
 
-export function ContactForm({
-	turnstileSiteKey,
-	turnstileBypass,
-}: ContactFormProps) {
+// Move schema outside component to avoid recreation on each render
+const contactSchema = z.object({
+	name: z.string().trim().min(1, 'Name required'),
+	email: z
+		.string()
+		.trim()
+		.min(1, 'Email required')
+		.email('Invalid email'),
+	subject: z.string().trim().min(1, 'Subject required'),
+	message: z.string().trim().min(10, 'Min 10 chars'),
+	turnstileToken: z.string().optional(),
+});
+
+export function ContactForm({ turnstileSiteKey, turnstileBypass }: ContactFormProps) {
 	const [submitted, setSubmitted] = useState(false);
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 	const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 	const [turnstileStatus, setTurnstileStatus] =
 		useState<TurnstileStatus>('idle');
 
-	const contactSchema = z.object({
-		name: z.string().trim().min(1, 'Name required'),
-		email: z.string().trim().min(1, 'Email required').email('Invalid email'),
-		subject: z.string().trim().min(1, 'Subject required'),
-		message: z.string().trim().min(10, 'Min 10 chars'),
-		turnstileToken: z.string().optional(),
-	});
+	// Lightweight inline validators to reduce zod cost per keystroke
+	// Debounced (microtask) validators: schedule minimal work; if user types quickly, only last value validates.
+	function debounceValidator(fn: (value: string) => string | undefined) {
+		let frame: number | null = null;
+		let latestValue: string = '';
+		let latestResult: string | undefined;
+		return (value: string) => {
+			latestValue = value;
+			if (frame) cancelAnimationFrame(frame);
+			frame = requestAnimationFrame(() => {
+				latestResult = fn(latestValue);
+			});
+			return latestResult;
+		};
+	}
+
+	const validators = {
+		name: debounceValidator((value: string) => (value.trim().length === 0 ? 'Name required' : undefined)),
+		email: debounceValidator((value: string) => {
+			if (value.trim().length === 0) return 'Email required';
+			return /.+@.+\..+/.test(value) ? undefined : 'Invalid email';
+		}),
+		subject: debounceValidator((value: string) =>
+			value.trim().length === 0 ? 'Subject required' : undefined,
+		),
+		message: debounceValidator((value: string) =>
+			value.trim().length < 10 ? 'Min 10 chars' : undefined,
+		),
+	};
 
 	const form = useForm({
 		defaultValues: {
@@ -39,6 +71,8 @@ export function ContactForm({
 			message: '',
 			turnstileToken: '',
 		},
+		// Avoid running full form-level validation every change; field validators handle it.
+		validators: {},
 		onSubmit: async ({ value, formApi }) => {
 			const parsed = contactSchema.safeParse(value);
 			if (!parsed.success) {
@@ -92,10 +126,7 @@ export function ContactForm({
 				<form.Field
 					name="name"
 					validators={{
-						onChange: ({ value }) => {
-							const r = contactSchema.shape.name.safeParse(value);
-							return r.success ? undefined : r.error.issues[0].message;
-						},
+						onChange: ({ value }) => validators.name(value),
 					}}
 				>
 					{(field) => (
@@ -126,10 +157,7 @@ export function ContactForm({
 				<form.Field
 					name="email"
 					validators={{
-						onChange: ({ value }) => {
-							const r = contactSchema.shape.email.safeParse(value);
-							return r.success ? undefined : r.error.issues[0].message;
-						},
+						onChange: ({ value }) => validators.email(value),
 					}}
 				>
 					{(field) => (
@@ -159,10 +187,7 @@ export function ContactForm({
 				<form.Field
 					name="subject"
 					validators={{
-						onChange: ({ value }) => {
-							const r = contactSchema.shape.subject.safeParse(value);
-							return r.success ? undefined : r.error.issues[0].message;
-						},
+						onChange: ({ value }) => validators.subject(value),
 					}}
 				>
 					{(field) => (
@@ -192,10 +217,7 @@ export function ContactForm({
 			<form.Field
 				name="message"
 				validators={{
-					onChange: ({ value }) => {
-						const r = contactSchema.shape.message.safeParse(value);
-						return r.success ? undefined : r.error.issues[0].message;
-					},
+					onChange: ({ value }) => validators.message(value),
 				}}
 			>
 				{(field) => (
@@ -253,6 +275,7 @@ export function ContactForm({
 					token={turnstileToken}
 					setToken={setTurnstileToken}
 					className="w-full space-y-1"
+					localFallback={!turnstileSiteKey}
 				/>
 				{/* Success toast now handled globally */}
 				{errorMsg && (

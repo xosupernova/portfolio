@@ -96,7 +96,7 @@ function RouteComponent() {
 					</div>
 				</aside>
 
-				{/* Contact Form */}
+				{/* Contact Form (skippable) */}
 				<section className="lg:col-span-2 space-y-8">
 					<div className="relative rounded-3xl border border-black/5 dark:border-white/10 bg-neutral-50/80 dark:bg-neutral-900/70 backdrop-blur-xl p-8 md:p-10 shadow-sm">
 						<div className="pointer-events-none absolute -inset-1 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.15),transparent_60%)]" />

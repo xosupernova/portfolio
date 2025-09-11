@@ -2,20 +2,24 @@
  *  © 2025 Nova Bowley. All rights reserved.
  */
 import { createFileRoute } from '@tanstack/react-router';
-import { NowPlaying, Typing } from '@/components';
+import * as React from 'react';
+import { Typing } from '@/components';
+
+const NowPlaying = React.lazy(() => import('@/components/media/NowPlaying'));
 
 function NowPlayingHome() {
 	return (
 		<div className="min-h-[60vh] flex flex-col items-center justify-center gap-12">
-			<h1 className="text-5xl font-extrabold text-center mx-auto text-black dark:text-white">
-				<Typing />
-			</h1>
-			<div
-				className="relative flex justify-center items-center w-full mt-2 text-lg"
-				style={{ minHeight: 80 }}
-			>
-				<NowPlaying />
-			</div>
+			{
+				<h1 className="text-5xl font-extrabold text-center mx-auto text-black dark:text-white">
+					<Typing />
+				</h1>
+			}
+			<React.Suspense fallback={<div className="text-sm opacity-60">Loading music…</div>}>
+				<div className="relative flex justify-center items-center w-full mt-2 text-lg min-h-20">
+					<NowPlaying />
+				</div>
+			</React.Suspense>
 		</div>
 	);
 }

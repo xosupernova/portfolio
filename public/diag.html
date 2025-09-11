@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Diagnostics Harness</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 2rem; line-height:1.4; }
+      label { display:block; margin-top:1rem; }
+      input, textarea { width:100%; font:inherit; padding:.6rem .75rem; border:1px solid #888; border-radius:6px; }
+    </style>
+  </head>
+  <body>
+    <h1>Diagnostic Inputs (No React)</h1>
+    <p>If typing here crashes the tab, issue is external (browser/driver). If not, problem is within React bundle.</p>
+    <label>Plain Input <input id="plain" placeholder="Type" /></label>
+    <label>Textarea <textarea id="ta" rows="6" placeholder="Type more"></textarea></label>
+    <script>
+      // Stress test: highlight reflow frequency
+      const info=document.createElement('pre'); document.body.appendChild(info);
+      let count=0; setInterval(()=>{info.textContent='Key events: '+count;},500);
+      document.addEventListener('keydown',()=>count++);
+    </script>
+  </body>
+</html>

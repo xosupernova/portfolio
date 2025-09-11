@@ -14,6 +14,8 @@ interface TurnstileWidgetProps {
 	token: string | null;
 	setToken: (t: string | null) => void;
 	className?: string;
+	// When true, don't load remote Turnstile script; simulate success locally.
+	localFallback?: boolean;
 }
 
 /**
@@ -27,12 +29,18 @@ export function TurnstileWidget({
 	token,
 	setToken,
 	className,
+	localFallback,
 }: TurnstileWidgetProps) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
 		if (!siteKey || bypass) return;
 		if (!containerRef.current) return;
+		if (localFallback) {
+			setStatus('rendered');
+			setToken('local-dev-token');
+			return;
+		}
 
 		const scriptRequested = { current: false };
 
@@ -109,26 +117,29 @@ export function TurnstileWidget({
 
 		observer.observe(containerRef.current);
 		return () => observer.disconnect();
-	}, [siteKey, bypass, setStatus, setToken]);
+	}, [siteKey, bypass, setStatus, setToken, localFallback]);
 
 	if (!siteKey || bypass) return null;
 
 	return (
 		<div className={className}>
 			<div ref={containerRef} className="mt-2" />
-			{status === 'loading' && (
+			{status === 'loading' && !localFallback && (
 				<p className="text-xs opacity-60">Loading verification…</p>
 			)}
-			{status === 'error' && (
+			{status === 'error' && !localFallback && (
 				<p className="text-xs text-rose-500 flex items-center gap-1">
 					<Icon icon="line-md:alert-circle" /> Verification unavailable. Please
 					reload.
 				</p>
 			)}
-			{status === 'rendered' && !token && (
+			{status === 'rendered' && !token && !localFallback && (
 				<p className="text-xs opacity-60">
 					Complete the verification to enable submission.
 				</p>
+			)}
+			{localFallback && (
+				<p className="text-xs opacity-60">Local verification bypass active.</p>
 			)}
 		</div>
 	);

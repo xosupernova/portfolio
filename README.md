@@ -26,6 +26,77 @@ To build this application for production:
 pnpm build
 ```
 
+## Deploying to Cloudflare Pages / Workers
+
+This project is configured for Cloudflare Pages with Functions (API routes in the `functions/` directory) using `wrangler.toml`.
+
+### Prerequisites
+
+- Install Wrangler: `pnpm add -D wrangler` (or globally `npm i -g wrangler`)
+- Authenticate: `npx wrangler login`
+
+### Pages Deployment (Static + Functions)
+
+1. Build the site:
+  ```bash
+  pnpm build
+  ```
+2. Preview locally with Cloudflare runtime (functions + KV simulation):
+  ```bash
+  pnpm cf:pages:preview
+  ```
+3. Deploy:
+  ```bash
+  pnpm cf:pages:deploy
+  ```
+
+Pages will serve assets from `dist/` and execute `/functions/api/*.ts` as edge functions. The contact form posts to `/api/contact`.
+
+### Environment Variables & Secrets
+
+Use `.env.example` as a template for local development. NEVER commit real secrets.
+
+Server-side secrets must be set with Wrangler (or Cloudflare dashboard):
+```bash
+pnpm wrangler secret pages put DISCORD_WEBHOOK
+pnpm wrangler secret pages put TURNSTILE_SECRET
+pnpm wrangler secret pages put SENTRY_AUTH_TOKEN
+```
+
+Non-secret build-time vars can go in `wrangler.toml` under `[vars]`.
+
+Last.fm hardening:
+- `LASTFM_API_KEY` and `LASTFM_USER` are server-only (no `VITE_` prefix) and used exclusively by `/api/lastfm`.
+- Frontend calls `/api/lastfm` so the key never appears in bundles.
+
+Discord & Turnstile:
+- `DISCORD_WEBHOOK` and `TURNSTILE_SECRET` are secrets; only the `VITE_TURNSTILE_SITE_KEY` is public.
+
+Rotation after exposure:
+If a secret was ever committed, revoke/rotate it (e.g. SENTRY_AUTH_TOKEN), optionally purge the repo history, then redeploy.
+
+### Optional KV for Rate Limiting
+
+Create a KV namespace and bind it if you want distributed rate limiting beyond the in-memory fallback:
+```bash
+wrangler kv:namespace create RATE_LIMIT_KV
+```
+Add the resulting id to `wrangler.toml`:
+```toml
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "<namespace_id>"
+```
+
+### Migrating to a Full Worker (SSR)
+
+Currently the app ships as a static SPA with an API function. If you later enable SSR via TanStack Start on Workers, you'd:
+1. Generate a worker entry (e.g. `dist/worker.js`).
+2. Replace `pages_build_output_dir` with `main = "dist/worker.js"` in `wrangler.toml`.
+3. Add any durable objects / caches as needed.
+
+Until then, the current setup is optimized for Pages (fast static edge delivery + lightweight API routes).
+
 ## Testing
 
 This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:

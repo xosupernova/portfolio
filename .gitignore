@@ -1,12 +1,59 @@
-node_modules
+########################################
+# OS & Editor noise
+########################################
 .DS_Store
-dist
-dist-ssr
-*.local
-count.txt
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+########################################
+# Package & dependency directories
+########################################
+node_modules
+
+########################################
+# Logs
+########################################
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-error.log*
+
+########################################
+# Test/Coverage caches
+########################################
+coverage/
+
+########################################
+# Build artifacts (client/server)
+########################################
+dist/
+dist-ssr/
+.output/
+.tanstack/
+.vinxi/
+.nitro/
+.vite/
+
+########################################
+# Environment & local config
+########################################
 .env
-.nitro
-.tanstack
-.output
-.vinxi
+.env.*
+!.env.example
+*.local
+.dev.vars
+wrangler.toml.local*
+
+########################################
+# App-specific misc files
+########################################
+count.txt
 todos.json
+
+########################################
+# Cloudflare Wrangler
+########################################
+.wrangler/
+

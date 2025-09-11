@@ -87,7 +87,8 @@ config.plugins.push(contactApiDevPlugin);
 export default wrapVinxiConfigWithSentry(config, {
 	org: process.env.VITE_SENTRY_ORG,
 	project: process.env.VITE_SENTRY_PROJECT,
-	authToken: process.env.VITE_SENTRY_AUTH_TOKEN,
+	// Use server-only secret (no VITE_ prefix) so it never reaches client bundles
+	authToken: process.env.SENTRY_AUTH_TOKEN,
 	// Only print logs for uploading source maps in CI
 	// Set to `true` to suppress logs
 	silent: !process.env.CI,
