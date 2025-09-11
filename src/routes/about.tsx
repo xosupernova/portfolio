@@ -3,6 +3,7 @@
  */
 import { Icon } from '@iconify/react';
 import { createFileRoute } from '@tanstack/react-router';
+import { makeHead, resolveAbsUrl } from '@/lib/head';
 
 function RouteComponent() {
 	const bullets = [
@@ -187,22 +188,19 @@ function RouteComponent() {
 export const Route = createFileRoute('/about')({
 	component: RouteComponent,
 	head: () => {
-		return {
-			title: '$ ./nova.sh --{About}',
-			meta: [
-				{ name: 'description', content: 'Nova Bowley portfolio about page' },
-				{ name: 'author', content: 'Nova Bowley' },
-				{ property: 'og:title', content: '$ ./nova.sh --{About}' },
-				{
-					property: 'og:description',
-					content: 'Nova Bowley portfolio about page',
-				},
-				{ property: 'og:type', content: 'website' },
-			],
-			links: [
-				{ rel: 'icon', href: '/favicon.ico' },
-				{ rel: 'manifest', href: '/manifest.json' },
-			],
-		};
+			const url = resolveAbsUrl('/about');
+			const img = resolveAbsUrl('/meta/about.png');
+			return makeHead({
+				title: '$ ./nova.sh --{About}',
+				description: 'Nova Bowley portfolio about page',
+				ogTitle: '$ ./nova.sh --{About}',
+				ogDescription: 'Nova Bowley portfolio about page',
+				ogUrl: url,
+				ogImage: img,
+				twitterCard: 'summary_large_image',
+				twitterTitle: '$ ./nova.sh --{About}',
+				twitterDescription: 'Nova Bowley portfolio about page',
+				twitterImage: img,
+			});
 	},
 });

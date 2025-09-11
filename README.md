@@ -9,6 +9,20 @@ Welcome to your new TanStack app!
 - [ ] Add animations to page transitions
 - [ ] Improve accessibility features
 
+# theme
+
+## Light Mode
+
+- Background: `bg-white`
+- Text: `text-black`
+- Accent: `from-indigo-500 to-indigo-900`
+
+## Dark Mode
+
+- Background: `bg-gray-900`
+- Text: `text-white`
+- Accent: `from-indigo-400 to-indigo-600`
+
 # Getting Started
 
 To run this application:

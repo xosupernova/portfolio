@@ -1,11 +1,12 @@
 /**
  *  © 2025 Nova Bowley. All rights reserved.
  */
-import  { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router';
+import  { createRootRoute, HeadContent, Scripts, useRouterState } from '@tanstack/react-router';
 
 // Allow Vite define replacement for SPA build guard
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare const __SPA_BUILD__: boolean | undefined;
+
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { useEffect, useState } from 'react';
 import {
@@ -24,7 +25,6 @@ import appCss from '../styles/app.css?url';
 
 export const Route = createRootRoute({
 	head: () => ({
-		title: 'Nova Bowley',
 		meta: [
 			{ charSet: 'utf-8' },
 			{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -180,6 +180,27 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+		function EdgeHeadCleanup() {
+				const pathname = useRouterState({ select: (s) => s.location.pathname });
+				useEffect(() => {
+					// touch dependency so linter understands intent to re-run on pathname changes
+					void pathname;
+					// Immediately remove server-injected non-title tags to avoid duplicates
+					const nonTitleNodes = document.head.querySelectorAll('[data-edge="1"]:not(title)');
+					nonTitleNodes.forEach((n) => n.parentElement?.removeChild(n));
+					// Always keep the current title element; just strip the data-edge marker if present
+					const edgeTitles = document.head.querySelectorAll('title[data-edge="1"]');
+					edgeTitles.forEach((t) => t.removeAttribute('data-edge'));
+				}, [pathname]);
+				// Also run once on mount for the initial load in SPA shell
+				useEffect(() => {
+					const nonTitleNodes = document.head.querySelectorAll('[data-edge="1"]:not(title)');
+					nonTitleNodes.forEach((n) => n.parentElement?.removeChild(n));
+					const edgeTitles = document.head.querySelectorAll('title[data-edge="1"]');
+					edgeTitles.forEach((t) => t.removeAttribute('data-edge'));
+				}, []);
+			return null;
+		}
 // RootDocument now relies on HeadContent to render titles provided by route head() functions.
 	// Toast state for contact success
 	const [open, setOpen] = useState(false);
@@ -200,10 +221,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	const minimal = false;
 	// In pure SPA build we already have an <html> shell from index.html; avoid nesting in hydration.
 	if (typeof __SPA_BUILD__ !== 'undefined') {
-		return (
+			return (
 			<div className="min-h-screen flex flex-col text-black dark:text-white bg-gradient-to-br from-gray-50 via-white to-gray-200 dark:bg-gradient-to-br dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800">
 				{/* Head manager (injects per-route meta) */}
 				<HeadContent />
+					<EdgeHeadCleanup />
 				{
 					<TooltipProvider delayDuration={200}>
 						<ToastProvider swipeDirection="right">
@@ -242,6 +264,25 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 		<html lang="en" suppressHydrationWarning>
 			<head>
 				<HeadContent />
+															<script
+																	// biome-ignore lint/security/noDangerouslySetInnerHtml: cleanup script
+																	dangerouslySetInnerHTML={{
+																			__html: `(() => { try { 
+						// Remove non-title server-injected tags synchronously
+						var nonTitles = document.head.querySelectorAll('[data-edge="1"]:not(title)');
+						nonTitles.forEach(function(n){ n.parentElement && n.parentElement.removeChild(n); });
+						// Title strategy:
+						// If a client title exists, remove the server one; otherwise keep it by stripping data-edge.
+						var edgeTitle = document.head.querySelector('title[data-edge="1"]');
+						var clientTitle = document.head.querySelector('title:not([data-edge="1"])');
+						if (edgeTitle && clientTitle) {
+							edgeTitle.parentElement && edgeTitle.parentElement.removeChild(edgeTitle);
+						} else if (edgeTitle && !clientTitle) {
+							edgeTitle.removeAttribute('data-edge');
+						}
+					} catch(_) {} })();`,
+																	}}
+															/>
 				<script
 					// biome-ignore lint/security/noDangerouslySetInnerHtml: needed for early theme set
 					dangerouslySetInnerHTML={{

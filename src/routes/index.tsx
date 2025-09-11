@@ -4,6 +4,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import * as React from 'react';
 import { Typing } from '@/components';
+import { makeHead, resolveAbsUrl } from '@/lib/head';
 
 const NowPlaying = React.lazy(() => import('@/components/media/NowPlaying'));
 
@@ -27,24 +28,19 @@ function NowPlayingHome() {
 export const Route = createFileRoute('/')({
 	component: NowPlayingHome,
 	head: () => {
-		return {
-			title: '$ ./nova.sh --{Home}',
-			meta: [
-				{ name: 'description', content: 'Nova Bowley portfolio homepage' },
-				{ name: 'author', content: 'Nova Bowley' },
-				{ property: 'og:title', content: '$ ./nova.sh --{Home}' },
-				{
-					property: 'og:description',
-					content: 'Nova Bowley portfolio homepage',
-				},
-				{ property: 'og:type', content: 'website' },
-			],
-			links: [
-				{ rel: 'icon', href: '/favicon.ico' },
-				{ rel: 'manifest', href: '/manifest.json' },
-			],
-		};
+			const url = resolveAbsUrl('/');
+			const img = resolveAbsUrl('/meta/index.png');
+			return makeHead({
+				title: '$ ./nova.sh --{Home}',
+				description: 'Nova Bowley portfolio homepage',
+				ogTitle: '$ ./nova.sh --{Home}',
+				ogDescription: 'Nova Bowley portfolio homepage',
+				ogUrl: url,
+				ogImage: img,
+				twitterCard: 'summary_large_image',
+				twitterTitle: '$ ./nova.sh --{Home}',
+				twitterDescription: 'Nova Bowley portfolio homepage',
+				twitterImage: img,
+			});
 	},
 });
-
-// NowPlaying component moved to ../components/NowPlaying

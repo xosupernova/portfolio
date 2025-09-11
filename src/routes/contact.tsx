@@ -5,6 +5,7 @@ import { Icon } from '@iconify/react';
 import { createFileRoute } from '@tanstack/react-router';
 import { ContactForm } from '@/components';
 import { env } from '@/env';
+import { makeHead, resolveAbsUrl } from '@/lib/head';
 
 function RouteComponent() {
 	const turnstileSiteKey = env.VITE_TURNSTILE_SITE_KEY;
@@ -98,8 +99,8 @@ function RouteComponent() {
 
 				{/* Contact Form (skippable) */}
 				<section className="lg:col-span-2 space-y-8">
-					<div className="relative rounded-3xl border border-black/5 dark:border-white/10 bg-neutral-50/80 dark:bg-neutral-900/70 backdrop-blur-xl p-8 md:p-10 shadow-sm">
-						<div className="pointer-events-none absolute -inset-1 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.15),transparent_60%)]" />
+					<div className="relative rounded-3xl overflow-hidden border border-black/5 dark:border-white/10 bg-neutral-50/80 dark:bg-neutral-900/70 backdrop-blur-xl p-8 md:p-10 shadow-sm">
+						<div className="pointer-events-none absolute inset-0 rounded-3xl bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.15),transparent_60%)]" />
 						<ContactForm
 							turnstileSiteKey={turnstileSiteKey}
 							turnstileBypass={turnstileBypass}
@@ -114,22 +115,19 @@ function RouteComponent() {
 export const Route = createFileRoute('/contact')({
 	component: RouteComponent,
 	head: () => {
-		return {
-			title: '$ ./nova.sh --{Contact}',
-			meta: [
-				{ name: 'description', content: 'Nova Bowley portfolio contact page' },
-				{ name: 'author', content: 'Nova Bowley' },
-				{ property: 'og:title', content: '$ ./nova.sh --{Contact}' },
-				{
-					property: 'og:description',
-					content: 'Nova Bowley portfolio contact page',
-				},
-				{ property: 'og:type', content: 'website' },
-			],
-			links: [
-				{ rel: 'icon', href: '/favicon.ico' },
-				{ rel: 'manifest', href: '/manifest.json' },
-			],
-		};
+			const url = resolveAbsUrl('/contact');
+			const img = resolveAbsUrl('/meta/contact.png');
+			return makeHead({
+				title: '$ ./nova.sh --{Contact}',
+				description: 'Nova Bowley portfolio contact page',
+				ogTitle: '$ ./nova.sh --{Contact}',
+				ogDescription: 'Nova Bowley portfolio contact page',
+				ogUrl: url,
+				ogImage: img,
+				twitterCard: 'summary_large_image',
+				twitterTitle: '$ ./nova.sh --{Contact}',
+				twitterDescription: 'Nova Bowley portfolio contact page',
+				twitterImage: img,
+			});
 	},
 });

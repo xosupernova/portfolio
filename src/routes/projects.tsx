@@ -2,6 +2,7 @@
  *  © 2025 Nova Bowley. All rights reserved.
  */
 import { createFileRoute } from '@tanstack/react-router';
+import { makeHead, resolveAbsUrl } from '@/lib/head';
 
 function RouteComponent() {
 	return (
@@ -16,22 +17,19 @@ function RouteComponent() {
 export const Route = createFileRoute('/projects')({
 	component: RouteComponent,
 	head: () => {
-		return {
+		const url = resolveAbsUrl('/projects');
+		const img = resolveAbsUrl('/meta/projects.png');
+		return makeHead({
 			title: '$ ./nova.sh --{Projects}',
-			meta: [
-				{ name: 'description', content: 'Nova Bowley portfolio projects page' },
-				{ name: 'author', content: 'Nova Bowley' },
-				{ property: 'og:title', content: '$ ./nova.sh --{Projects}' },
-				{
-					property: 'og:description',
-					content: 'Nova Bowley portfolio projects page',
-				},
-				{ property: 'og:type', content: 'website' },
-			],
-			links: [
-				{ rel: 'icon', href: '/favicon.ico' },
-				{ rel: 'manifest', href: '/manifest.json' },
-			],
-		};
+			description: 'Nova Bowley portfolio projects page',
+			ogTitle: '$ ./nova.sh --{Projects}',
+			ogDescription: 'Nova Bowley portfolio projects page',
+			ogUrl: url,
+			ogImage: img,
+			twitterCard: 'summary_large_image',
+			twitterTitle: '$ ./nova.sh --{Projects}',
+			twitterDescription: 'Nova Bowley portfolio projects page',
+			twitterImage: img,
+		});
 	},
 });

@@ -26,9 +26,7 @@ const cssLinks = cssAssets
 // Pull basic meta values from environment (fall back to defaults if missing)
 const appTitle = process.env.VITE_APP_TITLE || 'Nova Bowley';
 const appDescription = process.env.VITE_APP_DESCRIPTION || 'Portfolio';
-const appUrl = process.env.VITE_APP_URL || 'https://example.com';
 const themeColor = process.env.VITE_THEME_COLOR || '#09090b';
-const ogImage = process.env.VITE_OG_IMAGE || '/icon.webp';
 // Cloudflare Insights removed for stability / CSP simplicity. Reintroduce by restoring beacon snippet if desired.
 const analyticsScript = '';
 
@@ -43,15 +41,7 @@ const html = `<!doctype html>
   <noscript><style>html.dark{background:#0a0a0b;color:#fff}</style></noscript>
   <!-- Synchronous small script to set early theme class before first paint -->
   <script src="/theme-init.js"></script>
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="${appTitle}" />
-    <meta property="og:description" content="${appDescription}" />
-    <meta property="og:url" content="${appUrl}" />
-    <meta property="og:image" content="${ogImage}" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="${appTitle}" />
-    <meta name="twitter:description" content="${appDescription}" />
-    <meta name="twitter:image" content="${ogImage}" />
+  <!-- Omit default Open Graph / Twitter tags; route head() and edge function will inject per-page values -->
     <link rel="icon" href="/favicon.ico" />
     <link rel="manifest" href="/manifest.json" />
     ${cssLinks}
