@@ -39,9 +39,7 @@ const html = `<!doctype html>
     <meta name="description" content="${appDescription}" />
     <meta name="theme-color" content="${themeColor}" />
   <noscript><style>html.dark{background:#0a0a0b;color:#fff}</style></noscript>
-  <!-- Synchronous small script to set early theme class before first paint -->
   <script src="/theme-init.js"></script>
-  <!-- Omit default Open Graph / Twitter tags; route head() and edge function will inject per-page values -->
     <link rel="icon" href="/favicon.ico" />
     <link rel="manifest" href="/manifest.json" />
     ${cssLinks}
