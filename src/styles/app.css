@@ -2,3 +2,18 @@
   © 2025 Nova Bowley. All rights reserved.
 */
 @import "../styles.css";
+
+/* Markdown content niceties */
+.markdown img {
+	max-width: 100%;
+	height: auto;
+}
+.markdown table {
+	width: 100%;
+	border-collapse: collapse;
+}
+.markdown th,
+.markdown td {
+	padding: 0.4rem 0.6rem;
+	border-bottom: 1px solid color-mix(in oklab, canvastext 10%, transparent);
+}

@@ -1,3 +1,11 @@
+type PagesFunction = (ctx: {
+  request: Request;
+  next: () => Promise<Response>;
+  env?: Record<string, any>;
+  params?: Record<string, string>;
+  waitUntil?: (p: Promise<any>) => void;
+}) => Promise<Response>;
+
 export const onRequest: PagesFunction = async (ctx) => {
   const res = await ctx.next();
   const ct = res.headers.get('content-type') || '';

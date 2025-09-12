@@ -76,8 +76,12 @@ export default function Header({ forceDesktop }: HeaderProps) {
 						</DialogTrigger>
 						<DialogContent variant="right" className="px-4 py-6">
 							{/* Accessible title/description for screen readers (hidden visually) */}
-							<h2 className="sr-only" data-slot="title">Main navigation</h2>
-							<p className="sr-only" data-slot="description">Site menu and theme options</p>
+							<h2 className="sr-only" data-slot="title">
+								Main navigation
+							</h2>
+							<p className="sr-only" data-slot="description">
+								Site menu and theme options
+							</p>
 							<nav className="mb-6">
 								<ul className="flex flex-col gap-1">
 									{NAV_ITEMS.map((item) => (

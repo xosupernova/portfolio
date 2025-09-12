@@ -1,7 +1,12 @@
 /**
  *  © 2025 Nova Bowley. All rights reserved.
  */
-import  { createRootRoute, HeadContent, Scripts, useRouterState } from '@tanstack/react-router';
+import {
+	createRootRoute,
+	HeadContent,
+	Scripts,
+	useRouterState,
+} from '@tanstack/react-router';
 
 // Allow Vite define replacement for SPA build guard
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -104,7 +109,8 @@ export const Route = createRootRoute({
 							};
 						});
 					if (candidates.length) {
-						const pick = candidates[Math.floor(Math.random() * candidates.length)];
+						const pick =
+							candidates[Math.floor(Math.random() * candidates.length)];
 						if (!aborted) setMeme(pick);
 					} else if (!aborted) {
 						setError('No meme images found.');
@@ -114,7 +120,7 @@ export const Route = createRootRoute({
 						setError(
 							typeof e === 'object' && e && 'message' in e
 								? String((e as { message?: string }).message)
-							: 'Failed to load meme',
+								: 'Failed to load meme',
 						);
 				} finally {
 					if (!aborted) setLoading(false);
@@ -133,7 +139,8 @@ export const Route = createRootRoute({
 					{status} - {statusText}
 				</h1>
 				<p className="mb-4 max-w-prose">
-					Uh oh! You hit a page that doesn't exist or something went wrong. Here's a random British meme instead.
+					Uh oh! You hit a page that doesn't exist or something went wrong.
+					Here's a random British meme instead.
 				</p>
 				<div className="mb-6 w-full max-w-md flex flex-col items-center">
 					{loading && (
@@ -164,12 +171,12 @@ export const Route = createRootRoute({
 							className="rounded shadow mb-3 max-h-80 w-auto mx-auto"
 						/>
 					)}
-					{error && (
-						<p className="text-xs text-red-500 mb-2">{error}</p>
-					)}
+					{error && <p className="text-xs text-red-500 mb-2">{error}</p>}
 				</div>
 				<p className="mb-8 text-lg font-mono">
-					{meme ? 'At least the meme made it here.' : 'Even the dog cannot find this page.'}
+					{meme
+						? 'At least the meme made it here.'
+						: 'Even the dog cannot find this page.'}
 				</p>
 				<a href="/" className="text-blue-500 underline">
 					Go Home
@@ -180,28 +187,32 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-		function EdgeHeadCleanup() {
-				const pathname = useRouterState({ select: (s) => s.location.pathname });
-				useEffect(() => {
-					// touch dependency so linter understands intent to re-run on pathname changes
-					void pathname;
-					// Immediately remove server-injected non-title tags to avoid duplicates
-					const nonTitleNodes = document.head.querySelectorAll('[data-edge="1"]:not(title)');
-					nonTitleNodes.forEach((n) => n.parentElement?.removeChild(n));
-					// Always keep the current title element; just strip the data-edge marker if present
-					const edgeTitles = document.head.querySelectorAll('title[data-edge="1"]');
-					edgeTitles.forEach((t) => t.removeAttribute('data-edge'));
-				}, [pathname]);
-				// Also run once on mount for the initial load in SPA shell
-				useEffect(() => {
-					const nonTitleNodes = document.head.querySelectorAll('[data-edge="1"]:not(title)');
-					nonTitleNodes.forEach((n) => n.parentElement?.removeChild(n));
-					const edgeTitles = document.head.querySelectorAll('title[data-edge="1"]');
-					edgeTitles.forEach((t) => t.removeAttribute('data-edge'));
-				}, []);
-			return null;
-		}
-// RootDocument now relies on HeadContent to render titles provided by route head() functions.
+	function EdgeHeadCleanup() {
+		const pathname = useRouterState({ select: (s) => s.location.pathname });
+		useEffect(() => {
+			// touch dependency so linter understands intent to re-run on pathname changes
+			void pathname;
+			// Immediately remove server-injected non-title tags to avoid duplicates
+			const nonTitleNodes = document.head.querySelectorAll(
+				'[data-edge="1"]:not(title)',
+			);
+			nonTitleNodes.forEach((n) => n.parentElement?.removeChild(n));
+			// Always keep the current title element; just strip the data-edge marker if present
+			const edgeTitles = document.head.querySelectorAll('title[data-edge="1"]');
+			edgeTitles.forEach((t) => t.removeAttribute('data-edge'));
+		}, [pathname]);
+		// Also run once on mount for the initial load in SPA shell
+		useEffect(() => {
+			const nonTitleNodes = document.head.querySelectorAll(
+				'[data-edge="1"]:not(title)',
+			);
+			nonTitleNodes.forEach((n) => n.parentElement?.removeChild(n));
+			const edgeTitles = document.head.querySelectorAll('title[data-edge="1"]');
+			edgeTitles.forEach((t) => t.removeAttribute('data-edge'));
+		}, []);
+		return null;
+	}
+	// RootDocument now relies on HeadContent to render titles provided by route head() functions.
 	// Toast state for contact success
 	const [open, setOpen] = useState(false);
 	const [contactName, setContactName] = useState<string | null>(null);
@@ -221,18 +232,20 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	const minimal = false;
 	// In pure SPA build we already have an <html> shell from index.html; avoid nesting in hydration.
 	if (typeof __SPA_BUILD__ !== 'undefined') {
-			return (
+		return (
 			<div className="min-h-screen flex flex-col text-black dark:text-white bg-gradient-to-br from-gray-50 via-white to-gray-200 dark:bg-gradient-to-br dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800">
 				{/* Head manager (injects per-route meta) */}
 				<HeadContent />
-					<EdgeHeadCleanup />
+				<EdgeHeadCleanup />
 				{
 					<TooltipProvider delayDuration={200}>
 						<ToastProvider swipeDirection="right">
 							<Header />
 							<main className="flex-1 w-full pb-40">{children}</main>
 							<Footer />
-							{env.VITE_ENABLE_DEVTOOLS === 'true' && <TanStackRouterDevtools />}
+							{env.VITE_ENABLE_DEVTOOLS === 'true' && (
+								<TanStackRouterDevtools />
+							)}
 							<Toast
 								variant="success"
 								open={open}
@@ -241,16 +254,24 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 							>
 								<ToastTitle className="flex items-center font-semibold">
 									<span className="inline-flex items-center justify-center mr-2 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 size-6">
-										<svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
-											<path fill="currentColor" d="M9.55 17.6 4.3 12.35l1.4-1.4 3.85 3.85 8.75-8.75 1.4 1.4Z" />
+										<svg
+											viewBox="0 0 24 24"
+											className="size-4"
+											aria-hidden="true"
+										>
+											<path
+												fill="currentColor"
+												d="M9.55 17.6 4.3 12.35l1.4-1.4 3.85 3.85 8.75-8.75 1.4 1.4Z"
+											/>
 										</svg>
-								</span>
-								Message Sent
-							</ToastTitle>
-							<ToastDescription className="text-emerald-700 dark:text-emerald-200">
-								Thanks{contactName ? `, ${contactName}` : ''}! I'll reply soon.
-							</ToastDescription>
-							<ToastClose />
+									</span>
+									Message Sent
+								</ToastTitle>
+								<ToastDescription className="text-emerald-700 dark:text-emerald-200">
+									Thanks{contactName ? `, ${contactName}` : ''}! I'll reply
+									soon.
+								</ToastDescription>
+								<ToastClose />
 							</Toast>
 							<ToastViewport />
 						</ToastProvider>
@@ -264,10 +285,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 		<html lang="en" suppressHydrationWarning>
 			<head>
 				<HeadContent />
-															<script
-																	// biome-ignore lint/security/noDangerouslySetInnerHtml: cleanup script
-																	dangerouslySetInnerHTML={{
-																			__html: `(() => { try { 
+				<script
+					// biome-ignore lint/security/noDangerouslySetInnerHtml: cleanup script
+					dangerouslySetInnerHTML={{
+						__html: `(() => { try { 
 						// Remove non-title server-injected tags synchronously
 						var nonTitles = document.head.querySelectorAll('[data-edge="1"]:not(title)');
 						nonTitles.forEach(function(n){ n.parentElement && n.parentElement.removeChild(n); });
@@ -281,8 +302,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 							edgeTitle.removeAttribute('data-edge');
 						}
 					} catch(_) {} })();`,
-																	}}
-															/>
+					}}
+				/>
 				<script
 					// biome-ignore lint/security/noDangerouslySetInnerHtml: needed for early theme set
 					dangerouslySetInnerHTML={{
@@ -293,7 +314,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			<body className="min-h-screen flex flex-col text-black dark:text-white bg-gradient-to-br from-gray-50 via-white to-gray-200 dark:bg-gradient-to-br dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800">
 				{minimal ? (
 					<main className="flex-1 w-full p-4">
-						<p className="text-sm opacity-70">Diagnostic minimal shell active.</p>
+						<p className="text-sm opacity-70">
+							Diagnostic minimal shell active.
+						</p>
 						{children}
 					</main>
 				) : (
@@ -302,7 +325,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 							<Header />
 							<main className="flex-1 w-full pb-40">{children}</main>
 							<Footer />
-							{env.VITE_ENABLE_DEVTOOLS === 'true' && <TanStackRouterDevtools />}
+							{env.VITE_ENABLE_DEVTOOLS === 'true' && (
+								<TanStackRouterDevtools />
+							)}
 							<Toast
 								variant="success"
 								open={open}
@@ -311,16 +336,24 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 							>
 								<ToastTitle className="flex items-center font-semibold">
 									<span className="inline-flex items-center justify-center mr-2 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 size-6">
-										<svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
-											<path fill="currentColor" d="M9.55 17.6 4.3 12.35l1.4-1.4 3.85 3.85 8.75-8.75 1.4 1.4Z" />
+										<svg
+											viewBox="0 0 24 24"
+											className="size-4"
+											aria-hidden="true"
+										>
+											<path
+												fill="currentColor"
+												d="M9.55 17.6 4.3 12.35l1.4-1.4 3.85 3.85 8.75-8.75 1.4 1.4Z"
+											/>
 										</svg>
-								</span>
-								Message Sent
-							</ToastTitle>
-							<ToastDescription className="text-emerald-700 dark:text-emerald-200">
-								Thanks{contactName ? `, ${contactName}` : ''}! I'll reply soon.
-							</ToastDescription>
-							<ToastClose />
+									</span>
+									Message Sent
+								</ToastTitle>
+								<ToastDescription className="text-emerald-700 dark:text-emerald-200">
+									Thanks{contactName ? `, ${contactName}` : ''}! I'll reply
+									soon.
+								</ToastDescription>
+								<ToastClose />
 							</Toast>
 							<ToastViewport />
 						</ToastProvider>

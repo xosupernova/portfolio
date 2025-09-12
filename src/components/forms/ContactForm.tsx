@@ -16,17 +16,16 @@ interface ContactFormProps {
 // Move schema outside component to avoid recreation on each render
 const contactSchema = z.object({
 	name: z.string().trim().min(1, 'Name required'),
-	email: z
-		.string()
-		.trim()
-		.min(1, 'Email required')
-		.email('Invalid email'),
+	email: z.string().trim().min(1, 'Email required').email('Invalid email'),
 	subject: z.string().trim().min(1, 'Subject required'),
 	message: z.string().trim().min(10, 'Min 10 chars'),
 	turnstileToken: z.string().optional(),
 });
 
-export function ContactForm({ turnstileSiteKey, turnstileBypass }: ContactFormProps) {
+export function ContactForm({
+	turnstileSiteKey,
+	turnstileBypass,
+}: ContactFormProps) {
 	const [submitted, setSubmitted] = useState(false);
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 	const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
@@ -50,7 +49,9 @@ export function ContactForm({ turnstileSiteKey, turnstileBypass }: ContactFormPr
 	}
 
 	const validators = {
-		name: debounceValidator((value: string) => (value.trim().length === 0 ? 'Name required' : undefined)),
+		name: debounceValidator((value: string) =>
+			value.trim().length === 0 ? 'Name required' : undefined,
+		),
 		email: debounceValidator((value: string) => {
 			if (value.trim().length === 0) return 'Email required';
 			return /.+@.+\..+/.test(value) ? undefined : 'Invalid email';

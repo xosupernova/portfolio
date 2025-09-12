@@ -115,19 +115,19 @@ function RouteComponent() {
 export const Route = createFileRoute('/contact')({
 	component: RouteComponent,
 	head: () => {
-			const url = resolveAbsUrl('/contact');
-			const img = resolveAbsUrl('/meta/contact.png');
-			return makeHead({
-				title: '$ ./nova.sh --{Contact}',
-				description: 'Nova Bowley portfolio contact page',
-				ogTitle: '$ ./nova.sh --{Contact}',
-				ogDescription: 'Nova Bowley portfolio contact page',
-				ogUrl: url,
-				ogImage: img,
-				twitterCard: 'summary_large_image',
-				twitterTitle: '$ ./nova.sh --{Contact}',
-				twitterDescription: 'Nova Bowley portfolio contact page',
-				twitterImage: img,
-			});
+		const url = resolveAbsUrl('/contact');
+		const img = resolveAbsUrl('/meta/contact.png');
+		return makeHead({
+			title: '$ ./nova.sh --{Contact}',
+			description: 'Nova Bowley portfolio contact page',
+			ogTitle: '$ ./nova.sh --{Contact}',
+			ogDescription: 'Nova Bowley portfolio contact page',
+			ogUrl: url,
+			ogImage: img,
+			twitterCard: 'summary_large_image',
+			twitterTitle: '$ ./nova.sh --{Contact}',
+			twitterDescription: 'Nova Bowley portfolio contact page',
+			twitterImage: img,
+		});
 	},
 });

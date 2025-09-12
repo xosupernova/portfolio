@@ -14,10 +14,7 @@ interface PowerPhrase {
 
 const POWER_PHRASES: PowerPhrase[] = [
 	{
-		parts: [
-			{ icon: 'simple-icons:tesco' },
-			' meal deals',
-		],
+		parts: [{ icon: 'simple-icons:tesco' }, ' meal deals'],
 	},
 	{
 		parts: [
@@ -27,19 +24,12 @@ const POWER_PHRASES: PowerPhrase[] = [
 		],
 	},
 	{
-		parts: [
-			{ icon: 'tabler:brand-grindr' },
-			' hookups',
-		],
+		parts: [{ icon: 'tabler:brand-grindr' }, ' hookups'],
 	},
 	{
-		parts: [
-			'infinite ',
-			{ icon: 'simple-icons:redbull' },
-			' cans',
-		],
+		parts: ['infinite ', { icon: 'simple-icons:redbull' }, ' cans'],
 	},
-    	{
+	{
 		parts: [
 			'waiting for ',
 			{ icon: 'simple-icons:nationalrail' },
@@ -71,11 +61,9 @@ export function Footer() {
 							<Icon
 								key={`icon-${part.icon}-${part.className ?? 'na'}`}
 								icon={part.icon}
-								className={
-									['h-6 w-6 inline-block align-middle', part.className]
-										.filter(Boolean)
-										.join(' ')
-								}
+								className={['h-6 w-6 inline-block align-middle', part.className]
+									.filter(Boolean)
+									.join(' ')}
 							/>
 						);
 					})}

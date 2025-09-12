@@ -27,14 +27,32 @@
 	z-index: 10;
 }
 
-code, pre, kbd, samp {
-	font-family: "Google Sans Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+code,
+pre,
+kbd,
+samp {
+	font-family:
+		"Google Sans Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+		"Liberation Mono", "Courier New", monospace;
 }
 
 @layer base {
 	html {
 		/* Use normal UI font stack for body text; reserve code font for <code>/<pre> */
-		font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+		font-family:
+			ui-sans-serif,
+			system-ui,
+			-apple-system,
+			Segoe UI,
+			Roboto,
+			Inter,
+			Helvetica,
+			Arial,
+			"Noto Sans",
+			"Apple Color Emoji",
+			"Segoe UI Emoji",
+			"Segoe UI Symbol",
+			sans-serif;
 		letter-spacing: normal;
 		word-spacing: normal;
 		font-kerning: normal;

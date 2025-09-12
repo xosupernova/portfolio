@@ -118,11 +118,15 @@ export function NowPlaying() {
 						setAlbumArtUrl((prev) => prev || art);
 						setAlbumArtKey(key);
 						artKeyRef.current = key;
-						try { localStorage.setItem(`nowPlaying:albumArt:${key}`, art); } catch {}
+						try {
+							localStorage.setItem(`nowPlaying:albumArt:${key}`, art);
+						} catch {}
 					}
 				})();
 			}
-			try { localStorage.setItem('nowPlaying:lastTrack', JSON.stringify(data)); } catch {}
+			try {
+				localStorage.setItem('nowPlaying:lastTrack', JSON.stringify(data));
+			} catch {}
 		};
 
 		fetchAndSet();
@@ -144,12 +148,18 @@ export function NowPlaying() {
 	// Prefer cached / higher-res album art for this track; fallback to Last.fm image (with light cache-busting while now playing)
 	let imageSrc: string | null = null;
 	if (!imageError) {
-		if (albumArtKey && track && albumArtKey === makeTrackKey(track.artist, track.name, track.album) && albumArtUrl) {
+		if (
+			albumArtKey &&
+			track &&
+			albumArtKey === makeTrackKey(track.artist, track.name, track.album) &&
+			albumArtUrl
+		) {
 			imageSrc = albumArtUrl;
 		} else if (isValidImage(track.image)) {
 			imageSrc = track.image;
 			if (track.nowPlaying) {
 				const ts = Math.floor(Date.now() / 10000); // change every 10s to align with poll
+				// biome-ignore lint/style/useTemplate: false positive
 				imageSrc += (imageSrc.includes('?') ? '&' : '?') + 'ts=' + ts;
 			}
 		}

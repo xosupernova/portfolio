@@ -16,7 +16,9 @@ function NowPlayingHome() {
 					<Typing />
 				</h1>
 			}
-			<React.Suspense fallback={<div className="text-sm opacity-60">Loading music…</div>}>
+			<React.Suspense
+				fallback={<div className="text-sm opacity-60">Loading music…</div>}
+			>
 				<div className="relative flex justify-center items-center w-full mt-2 text-lg min-h-20">
 					<NowPlaying />
 				</div>
@@ -28,19 +30,19 @@ function NowPlayingHome() {
 export const Route = createFileRoute('/')({
 	component: NowPlayingHome,
 	head: () => {
-			const url = resolveAbsUrl('/');
-			const img = resolveAbsUrl('/meta/index.png');
-			return makeHead({
-				title: '$ ./nova.sh --{Home}',
-				description: 'Nova Bowley portfolio homepage',
-				ogTitle: '$ ./nova.sh --{Home}',
-				ogDescription: 'Nova Bowley portfolio homepage',
-				ogUrl: url,
-				ogImage: img,
-				twitterCard: 'summary_large_image',
-				twitterTitle: '$ ./nova.sh --{Home}',
-				twitterDescription: 'Nova Bowley portfolio homepage',
-				twitterImage: img,
-			});
+		const url = resolveAbsUrl('/');
+		const img = resolveAbsUrl('/meta/index.png');
+		return makeHead({
+			title: '$ ./nova.sh --{Home}',
+			description: 'Nova Bowley portfolio homepage',
+			ogTitle: '$ ./nova.sh --{Home}',
+			ogDescription: 'Nova Bowley portfolio homepage',
+			ogUrl: url,
+			ogImage: img,
+			twitterCard: 'summary_large_image',
+			twitterTitle: '$ ./nova.sh --{Home}',
+			twitterDescription: 'Nova Bowley portfolio homepage',
+			twitterImage: img,
+		});
 	},
 });
