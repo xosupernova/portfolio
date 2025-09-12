@@ -20,9 +20,9 @@ export type ProjectDef = {
 // TODO: curate this list to your actual projects
 export const PROJECTS: ProjectDef[] = [
 	{
-		slug: 'portfolio-tan',
+		slug: 'portfolio',
 		owner: 'xosupernova',
-		repo: 'portfolio-tan',
+		repo: 'portfolio',
 		title: 'Portfolio (This Site)',
 		description:
 			'Source code for this portfolio built with TanStack Start + Vite',

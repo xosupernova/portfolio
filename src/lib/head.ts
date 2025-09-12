@@ -84,7 +84,7 @@ export function makeHead({
 			twitterSite ? { name: 'twitter:site', content: twitterSite } : undefined,
 		].filter(Boolean),
 		links: [
-			{ rel: 'icon', href: '/favicon.ico' },
+			{ rel: 'icon', href: '/img/favicon.ico' },
 			{ rel: 'manifest', href: '/manifest.json' },
 		],
 	};

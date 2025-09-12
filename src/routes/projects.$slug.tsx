@@ -138,7 +138,7 @@ export const Route = createFileRoute('/projects/$slug')({
 			: '$ ./nova.sh --{Projects}';
 		const desc = ld?.proj?.description || 'Project details';
 		const url = resolveAbsUrl(`/projects/${ld?.proj?.slug ?? ''}`);
-		const img = resolveAbsUrl('/meta/projects.png');
+		const img = resolveAbsUrl('/img/meta/projects.png');
 		return makeHead({
 			title,
 			description: desc,

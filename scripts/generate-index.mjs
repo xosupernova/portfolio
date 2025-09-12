@@ -40,7 +40,7 @@ const html = `<!doctype html>
     <meta name="theme-color" content="${themeColor}" />
   <noscript><style>html.dark{background:#0a0a0b;color:#fff}</style></noscript>
   <script src="/theme-init.js"></script>
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href="/img/favicon.ico" />
     <link rel="manifest" href="/manifest.json" />
     ${cssLinks}
   </head>

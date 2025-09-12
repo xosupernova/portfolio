@@ -150,7 +150,7 @@ function RouteComponent() {
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
 				<div className="flex justify-center md:justify-start">
 					<img
-						src="/me.webp"
+						src="/img/me.webp"
 						alt="Nova Bowley"
 						className="rounded-full w-72 h-72 object-cover shadow-xl border border-black/10 dark:border-white/10"
 						loading="lazy"
@@ -189,7 +189,7 @@ export const Route = createFileRoute('/about')({
 	component: RouteComponent,
 	head: () => {
 		const url = resolveAbsUrl('/about');
-		const img = resolveAbsUrl('/meta/about.png');
+		const img = resolveAbsUrl('/img/meta/about.png');
 		return makeHead({
 			title: '$ ./nova.sh --{About}',
 			description: 'Nova Bowley portfolio about page',

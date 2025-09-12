@@ -106,7 +106,7 @@ export const Route = createFileRoute('/projects')({
 	component: RouteComponent,
 	head: () => {
 		const url = resolveAbsUrl('/projects');
-		const img = resolveAbsUrl('/meta/projects.png');
+		const img = resolveAbsUrl('/img/meta/projects.png');
 		return makeHead({
 			title: '$ ./nova.sh --{Projects}',
 			description: 'Nova Bowley portfolio projects page',

@@ -116,7 +116,7 @@ export const Route = createFileRoute('/contact')({
 	component: RouteComponent,
 	head: () => {
 		const url = resolveAbsUrl('/contact');
-		const img = resolveAbsUrl('/meta/contact.png');
+		const img = resolveAbsUrl('/img/meta/contact.png');
 		return makeHead({
 			title: '$ ./nova.sh --{Contact}',
 			description: 'Nova Bowley portfolio contact page',

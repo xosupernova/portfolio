@@ -31,7 +31,7 @@ export const Route = createFileRoute('/')({
 	component: NowPlayingHome,
 	head: () => {
 		const url = resolveAbsUrl('/');
-		const img = resolveAbsUrl('/meta/index.png');
+		const img = resolveAbsUrl('/img/meta/index.png');
 		return makeHead({
 			title: '$ ./nova.sh --{Home}',
 			description: 'Nova Bowley portfolio homepage',

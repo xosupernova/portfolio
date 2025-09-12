@@ -28,7 +28,7 @@ export const onRequest: PagesFunction = async (ctx) => {
   };
   const meta = metaMap[routePath] || { title: 'Nova Bowley', description: 'Portfolio' };
 
-  const img = `${origin}/meta/${slug}.png`;
+  const img = `${origin}/img/meta/${slug}.png`;
   const pageUrl = `${origin}${url.pathname}`;
 
   const html = await res.text();
