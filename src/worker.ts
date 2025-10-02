@@ -26,6 +26,9 @@ type Env = {
 	VITE_LASTFM_API_KEY?: string;
 	LASTFM_USER?: string;
 	VITE_LASTFM_USER?: string;
+	// Git commit exposed via env (set in CI or CF vars)
+	COMMIT_SHA?: string;
+	VITE_COMMIT_SHA?: string;
 };
 
 const MEMORY_WINDOW_MS = 60_000;
@@ -247,6 +250,38 @@ async function handleLastfm(_request: Request, env: Env): Promise<Response> {
 	}
 }
 
+async function handlePlacement(request: Request, env?: Env): Promise<Response> {
+	// Prefer platform-provided header if available
+	const hdr =
+		request.headers.get('cf-placement') ||
+		request.headers.get('CF-Placement') ||
+		'';
+	// Fallback to request.cf info in Workers, or 'dev' locally
+	const cf = (request as unknown as { cf?: Record<string, unknown> }).cf || {};
+	const colo = (cf as { colo?: string }).colo || null;
+	const country = (cf as { country?: string }).country || null;
+	const city = (cf as { city?: string }).city || null;
+	const ray = request.headers.get('cf-ray') || null;
+	const commit = (env?.VITE_COMMIT_SHA || env?.COMMIT_SHA || '').slice(0, 7) || null;
+	return new Response(
+		JSON.stringify({
+			placement: hdr || colo || 'dev',
+			colo,
+			country,
+			city,
+			httpHeader: hdr || null,
+			ray,
+			commit,
+		}),
+		{
+			headers: {
+				'Content-Type': 'application/json',
+				'Cache-Control': 'no-store',
+			},
+		},
+	);
+}
+
 function corsify(res: Response, origin?: string): Response {
 	const hdrs = new Headers(res.headers);
 	hdrs.set('Access-Control-Allow-Origin', origin || '*');
@@ -281,6 +316,12 @@ export default {
 		}
 		if (url.pathname === '/api/lastfm') {
 			const res = await handleLastfm(request, env);
+			return corsify(res);
+		}
+		if (url.pathname === '/api/placement') {
+			if (request.method === 'OPTIONS')
+				return corsify(new Response('', { status: 204 }));
+			const res = await handlePlacement(request, env);
 			return corsify(res);
 		}
 		return serveAssetWithSpaFallback(request, env);

@@ -27,6 +27,7 @@ export const env = createEnv({
 			.default('Personal portfolio for Nova Bowley'),
 		VITE_APP_AUTHOR: z.string().min(1).default('Nova Bowley'),
 		VITE_APP_AUTHOR_SHORT: z.string().min(1).default('Nova'),
+		VITE_REPO_URL: z.string().url().optional(),
 		// Optional site URL used to construct absolute URLs for meta tags in SPA
 		VITE_SITE_URL: z.string().url().optional(),
 		// Optional default OG image used by head helper when a route doesn't specify one

@@ -25,7 +25,7 @@ id = "774fcd06999c4941addc72d16aa46280"
 
 [vars]
 # Any non-secret vars (client-exposed must be prefixed VITE_*)
-VITE_SITE_VERSION = "1.0.0"
+# Optionally set VITE_COMMIT_SHA via CI or Cloudflare vars to surface the commit hash in the footer
 LASTFM_USER = "xo_supernova" # non-secret username for Last.fm proxy
 VITE_APP_TITLE = "Nova Bowley"
 VITE_APP_URL = "https://n0va.dev"
@@ -35,6 +35,7 @@ VITE_APP_TITLE_SHORT = "Nova"
 VITE_APP_DESCRIPTION = "Personal portfolio for Nova Bowley"
 VITE_APP_AUTHOR = "Nova Bowley"
 VITE_APP_AUTHOR_SHORT = "Nova"
+VITE_REPO_URL = "https://github.com/xosupernova/portfolio"
 VITE_TURNSTILE_SITE_KEY = "0x4AAAAAAA6w1M7_zbGeb8tc" # set if using Turnstile widget
 VITE_SOCIALS_GITHUB = "https://github.com/xosupernova"
 VITE_SOCIALS_DISCORD = "https://discord.com/users/895595833540636682"
