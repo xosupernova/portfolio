@@ -20,10 +20,13 @@ export const env = createEnv({
 	clientPrefix: 'VITE_',
 
 	client: {
-		VITE_APP_TITLE: z.string().min(1),
-		VITE_APP_DESCRIPTION: z.string().min(1),
-		VITE_APP_AUTHOR: z.string().min(1),
-		VITE_APP_AUTHOR_SHORT: z.string().min(1),
+		VITE_APP_TITLE: z.string().min(1).default('Nova Bowley'),
+		VITE_APP_DESCRIPTION: z
+			.string()
+			.min(1)
+			.default('Personal portfolio for Nova Bowley'),
+		VITE_APP_AUTHOR: z.string().min(1).default('Nova Bowley'),
+		VITE_APP_AUTHOR_SHORT: z.string().min(1).default('Nova'),
 		// Optional site URL used to construct absolute URLs for meta tags in SPA
 		VITE_SITE_URL: z.string().url().optional(),
 		// Optional default OG image used by head helper when a route doesn't specify one

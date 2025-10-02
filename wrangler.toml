@@ -1,6 +1,8 @@
 name = "portfolio"
 # Choose a recent date; update periodically.
-compatibility_date = "2025-08-26"
+compatibility_date = "2025-09-12"
+
+
 
 # For Cloudflare Pages deployment (static assets + Functions API)
 # Vite build outputs to "dist" by default.
@@ -19,18 +21,18 @@ id = "774fcd06999c4941addc72d16aa46280"
 VITE_SITE_VERSION = "1.0.0"
 LASTFM_USER = "xo_supernova" # non-secret username for Last.fm proxy
 VITE_APP_TITLE = "Nova Bowley"
-VITE_APP_URL = "https://xosupernova.xyz"
-VITE_SITE_URL = "https://xosupernova.xyz"
+VITE_APP_URL = "https://n0va.dev"
+VITE_SITE_URL = "https://n0va.dev"
 VITE_OG_IMAGE = "/img/icon.webp"
 VITE_APP_TITLE_SHORT = "Nova"
 VITE_APP_DESCRIPTION = "Personal portfolio for Nova Bowley"
 VITE_APP_AUTHOR = "Nova Bowley"
 VITE_APP_AUTHOR_SHORT = "Nova"
-VITE_TURNSTILE_SITE_KEY = "" # set if using Turnstile widget
+VITE_TURNSTILE_SITE_KEY = "0x4AAAAAAA6w1M7_zbGeb8tc" # set if using Turnstile widget
 VITE_SOCIALS_GITHUB = "https://github.com/xosupernova"
 VITE_SOCIALS_DISCORD = "https://discord.com/users/895595833540636682"
-VITE_SOCIALS_EMAIL = "mailto:me@xosupernova.xyz"
-VITE_SOCIALS_X = "https://twitter.com/xosupernova"
+VITE_SOCIALS_EMAIL = "mailto:me@n0va.dev"
+VITE_SOCIALS_X = "https://x.com/xosupernova"
 VITE_SOCIALS_INSTAGRAM = "https://instagram.com/xo_supernova"
 VITE_SOCIALS_LINKEDIN = "https://linkedin.com/in/xosupernova"
 VITE_SOCIALS_FACEBOOK = "https://facebook.com/xosupernovaxox"
@@ -50,3 +52,13 @@ VITE_ENABLE_DEVTOOLS = "false"      # set true to expose TanStack Router devtool
 
 # If later moving to a dedicated Worker (SSR), you would replace pages_build_output_dir with a `main` entry pointing
 # to a bundled worker script and remove the [site] block.
+
+
+[env.preview]
+[env.preview.vars]
+# Example overrides used when deploying/running the "preview" environment
+# Note: For Cloudflare Pages, environment variables for the build/runtime are usually
+# managed in the Cloudflare Dashboard under Pages -> Settings -> Environment Variables.
+# This block is primarily for Pages Functions bindings and local dev overrides.
+VITE_APP_URL = "https://portfolio.pages.dev"
+VITE_SITE_URL = "https://portfolio.pages.dev"

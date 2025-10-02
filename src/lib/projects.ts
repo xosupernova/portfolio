@@ -27,7 +27,7 @@ export const PROJECTS: ProjectDef[] = [
 		description:
 			'Source code for this portfolio built with TanStack Start + Vite',
 		tags: ['react', 'tanstack', 'vite', 'cloudflare'],
-		homepage: 'https://xosupernova.xyz',
+		homepage: 'https://n0va.dev',
 		image: '/img/projects/portfolio.png',
 		imageAlt: 'Portfolio screenshot',
 	},

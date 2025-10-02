@@ -15,6 +15,11 @@ export const createRouter = () => {
 	});
 };
 
+// Exported API expected by TanStack Start's client to obtain the router
+// Alias "#tanstack-router-entry" imports { getRouter } from this module.
+// It can be sync or async; hydrateStart awaits the result.
+export const getRouter = () => createRouter();
+
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {
 	interface Register {
