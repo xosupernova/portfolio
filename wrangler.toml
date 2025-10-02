@@ -2,16 +2,17 @@ name = "portfolio"
 # Choose a recent date; update periodically.
 compatibility_date = "2025-09-12"
 
+# Workers (deploy from Git) configuration
+# - main worker script serves static assets and APIs
+main = "dist/worker.mjs"
 
+# Bind static assets built by SPA to ASSETS within the Worker
+[assets]
+directory = ".tanstack/start/build/client-dist"
+binding = "ASSETS"
 
-# For Cloudflare Pages deployment (static assets + Functions API)
-# Vite build outputs to "dist" by default.
-pages_build_output_dir = ".output"
-
-# Functions directory already present: functions/
-# Add a KV binding for rate limiting if you create it (optional)
-# Run: wrangler kv:namespace create RATE_LIMIT_KV
-# Then copy the id below.
+# KV binding for rate limiting (optional but recommended). Create if needed:
+# wrangler kv:namespace create RATE_LIMIT_KV
 [[kv_namespaces]]
 binding = "RATE_LIMIT_KV"
 id = "774fcd06999c4941addc72d16aa46280"
@@ -50,15 +51,8 @@ VITE_ENABLE_DEVTOOLS = "false"      # set true to expose TanStack Router devtool
 # VITE_SENTRY_AUTH_TOKEN
 
 
-# If later moving to a dedicated Worker (SSR), you would replace pages_build_output_dir with a `main` entry pointing
-# to a bundled worker script and remove the [site] block.
-
-
+# Environment overrides example
 [env.preview]
 [env.preview.vars]
-# Example overrides used when deploying/running the "preview" environment
-# Note: For Cloudflare Pages, environment variables for the build/runtime are usually
-# managed in the Cloudflare Dashboard under Pages -> Settings -> Environment Variables.
-# This block is primarily for Pages Functions bindings and local dev overrides.
 VITE_APP_URL = "https://portfolio.pages.dev"
 VITE_SITE_URL = "https://portfolio.pages.dev"

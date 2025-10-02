@@ -3,12 +3,13 @@
  *  © 2025 Nova Bowley. All rights reserved.
  */
 
-// biome-ignore assist/source/organizeImports: false positive
 import { createFileRoute, useLoaderData } from '@tanstack/react-router';
 import React, { Suspense } from 'react';
-import { makeHead, resolveAbsUrl } from '@/lib/head';
 import { fetchGithubReadme } from '@/lib/github';
-import { findProject, type ProjectDef } from '@/lib/projects';
+import { makeHead, resolveAbsUrl } from '@/lib/head';
+import type { ProjectDef } from '@/lib/projects';
+import { findProject } from '@/lib/projects';
+
 const ProjectsSlugView = React.lazy(() => import('./projects.$slug.view'));
 
 type LoaderData = {
@@ -21,7 +22,11 @@ function RouteComponent() {
 	const proj = data?.proj ?? null;
 	const md = data?.md ?? null;
 	return (
-		<Suspense fallback={<div className="py-10 text-center opacity-70">Loading README…</div>}>
+		<Suspense
+			fallback={
+				<div className="py-10 text-center opacity-70">Loading README…</div>
+			}
+		>
 			<ProjectsSlugView proj={proj} md={md} />
 		</Suspense>
 	);

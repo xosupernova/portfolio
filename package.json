@@ -6,19 +6,19 @@
     "dev": "vite dev --port 3000 --host",
     "start": "node .output/server/index.mjs",
     "build": "vite build",
-    "build:spa": "pnpm fetch:fonts && vite build -c vite.spa.config.ts && pnpm generate:index",
+    "build:spa": "pnpm fetch:fonts && vite build -c vite.spa.config.ts && pnpm generate:index && node -e \"require('node:fs').copyFileSync('public/_headers','.tanstack/start/build/client-dist/_headers')\"",
+    "build:worker": "pnpm build:spa && vite build -c vite.worker.config.ts",
     "fetch:fonts": "node scripts/fetch-fonts.mjs",
     "serve": "vite preview",
     "dev:spa": "vite dev -c vite.spa.config.ts --port 5174 --host --open /index.html",
     "preview:spa": "vite preview -c vite.spa.config.ts --port 5175",
     "dev:diag": "vite dev -c vite.spa.config.ts --port 5176 --host --open /diag.html",
-    "cf:pages:preview": "pnpm build && wrangler pages dev dist --compatibility-date=2025-08-26",
-    "cf:pages:deploy": "pnpm build:spa && wrangler pages deploy .tanstack/start/build/client-dist",
-    "cf:pages:deploy:preview": "pnpm build:spa && wrangler pages deploy .tanstack/start/build/client-dist --project-name=portfolio --branch=preview",
+    "cf:workers:dev": "pnpm build:worker && wrangler dev",
+    "cf:workers:deploy": "pnpm build:worker && wrangler deploy",
     "generate:index": "node scripts/generate-index.mjs",
     "test": "vitest run",
-    "format": "biome format",
-    "lint": "biome lint",
+    "format": "biome format --write",
+    "lint": "biome lint --write",
     "check": "biome check"
   },
   "dependencies": {
@@ -76,5 +76,5 @@
     "web-vitals": "^4.2.4",
     "wrangler": "^4.41.0"
   },
-  "packageManager": "pnpm@10.15.1+sha512.34e538c329b5553014ca8e8f4535997f96180a1d0f614339357449935350d924e22f8614682191264ec33d1462ac21561aff97f6bb18065351c162c7e8f6de67"
+  "packageManager": "pnpm@10.18.0+sha512.e804f889f1cecc40d572db084eec3e4881739f8dec69c0ff10d2d1beff9a4e309383ba27b5b750059d7f4c149535b6cd0d2cb1ed3aeb739239a4284a68f40cfa"
 }
