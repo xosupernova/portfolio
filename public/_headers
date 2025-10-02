@@ -1,5 +1,5 @@
 /*
-	Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com; connect-src 'self' https://itunes.apple.com https://api.iconify.design https://api.unisvg.com https://api.simplesvg.com https://www.reddit.com https://ws.audioscrobbler.com https://*.sentry.io; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://challenges.cloudflare.com; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests; block-all-mixed-content
+	Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com; connect-src 'self' https://itunes.apple.com https://api.iconify.design https://api.unisvg.com https://api.simplesvg.com https://www.reddit.com https://ws.audioscrobbler.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://challenges.cloudflare.com; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests; block-all-mixed-content
 	Permissions-Policy: camera=(), microphone=(), geolocation=()
 	Referrer-Policy: strict-origin-when-cross-origin
 	X-Content-Type-Options: nosniff
@@ -8,6 +8,9 @@
 	Cross-Origin-Resource-Policy: same-origin
 	X-DNS-Prefetch-Control: off
 	X-Robots-Tag: all
+
+	# Note: We intentionally do not include 'unsafe-eval' or 'wasm-unsafe-eval' in script-src to keep CSP strict.
+	# If you enable Sentry Session Replay or other features that need eval/wasm-eval, you must relax CSP accordingly.
 
 
 

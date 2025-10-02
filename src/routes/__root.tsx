@@ -12,7 +12,6 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare const __SPA_BUILD__: boolean | undefined;
 
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { useEffect, useState } from 'react';
 import {
 	Footer,
@@ -187,8 +186,19 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+	// Lazily load devtools only in development and when explicitly enabled
+	const [Devtools, setDevtools] = useState<React.ComponentType | null>(null);
+	useEffect(() => {
+		if (import.meta.env.DEV && env.VITE_ENABLE_DEVTOOLS === 'true') {
+			import('@tanstack/react-router-devtools')
+				.then((m) => setDevtools(() => m.TanStackRouterDevtools))
+				.catch(() => setDevtools(null));
+		}
+	}, []);
 	function EdgeHeadCleanup() {
-		const pathname = useRouterState({ select: (s) => s.location.pathname });
+		const pathname = useRouterState({
+			select: (s: { location: { pathname: string } }) => s.location.pathname,
+		});
 		useEffect(() => {
 			// touch dependency so linter understands intent to re-run on pathname changes
 			void pathname;
@@ -243,9 +253,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 							<Header />
 							<main className="flex-1 w-full pb-40">{children}</main>
 							<Footer />
-							{env.VITE_ENABLE_DEVTOOLS === 'true' && (
-								<TanStackRouterDevtools />
-							)}
+							{Devtools ? <Devtools /> : null}
 							<Toast
 								variant="success"
 								open={open}
@@ -325,9 +333,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 							<Header />
 							<main className="flex-1 w-full pb-40">{children}</main>
 							<Footer />
-							{env.VITE_ENABLE_DEVTOOLS === 'true' && (
-								<TanStackRouterDevtools />
-							)}
+							{Devtools ? <Devtools /> : null}
 							<Toast
 								variant="success"
 								open={open}

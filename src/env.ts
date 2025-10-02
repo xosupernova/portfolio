@@ -31,8 +31,6 @@ export const env = createEnv({
 		VITE_SITE_URL: z.string().url().optional(),
 		// Optional default OG image used by head helper when a route doesn't specify one
 		VITE_OG_IMAGE: z.string().optional(),
-		VITE_ENABLE_SENTRY: z.string().optional(),
-		VITE_ENABLE_SENTRY_REPLAY: z.string().optional(),
 		VITE_DISABLE_STRICT_MODE: z.string().optional(),
 		VITE_ENABLE_DEVTOOLS: z.string().optional(),
 

@@ -6,6 +6,12 @@ compatibility_date = "2025-09-12"
 # - main worker script serves static assets and APIs
 main = "dist/worker.mjs"
 
+[observability.logs]
+enabled = true
+
+[placement]
+mode = "smart"
+
 # Bind static assets built by SPA to ASSETS within the Worker
 [assets]
 directory = ".tanstack/start/build/client-dist"
@@ -37,11 +43,7 @@ VITE_SOCIALS_X = "https://x.com/xosupernova"
 VITE_SOCIALS_INSTAGRAM = "https://instagram.com/xo_supernova"
 VITE_SOCIALS_LINKEDIN = "https://linkedin.com/in/xosupernova"
 VITE_SOCIALS_FACEBOOK = "https://facebook.com/xosupernovaxox"
-VITE_SENTRY_ORG = "xosupernova"
-VITE_SENTRY_PROJECT = "portfolio"
-VITE_SENTRY_DSN = "https://b477dc7179323ca7f8b3920e4d7d4d36@o4509912537038848.ingest.de.sentry.io/4509912552898640" # optional public DSN if you enable client Sentry
-VITE_ENABLE_SENTRY = "true"        # set to "false" to disable all client Sentry
-VITE_ENABLE_SENTRY_REPLAY = "true" # set to "true" to enable Session Replay
+VITE_ENABLE_SENTRY = "false"
 VITE_DISABLE_STRICT_MODE = "false"  # set to "true" to render without React.StrictMode (diagnostics)
 VITE_ENABLE_DEVTOOLS = "false"      # set true to expose TanStack Router devtools in production build
 

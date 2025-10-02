@@ -1,8 +1,6 @@
 import { fileURLToPath, URL } from 'node:url';
-import { wrapVinxiConfigWithSentry } from '@sentry/tanstackstart-react';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
-import viteReact from '@vitejs/plugin-react';
 import { defineConfig, type Plugin } from 'vite';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
 
@@ -13,10 +11,7 @@ const config = defineConfig({
 			projects: ['./tsconfig.json'],
 		}),
 		tailwindcss(),
-		tanstackStart({
-			customViteReactPlugin: true,
-		}),
-		viteReact(),
+		tanstackStart({}),
 	],
 	resolve: {
 		alias: {
@@ -84,12 +79,4 @@ if (!config.plugins) {
 }
 config.plugins.push(contactApiDevPlugin);
 
-export default wrapVinxiConfigWithSentry(config, {
-	org: process.env.VITE_SENTRY_ORG,
-	project: process.env.VITE_SENTRY_PROJECT,
-	// Use server-only secret (no VITE_ prefix) so it never reaches client bundles
-	authToken: process.env.SENTRY_AUTH_TOKEN,
-	// Only print logs for uploading source maps in CI
-	// Set to `true` to suppress logs
-	silent: !process.env.CI,
-});
+export default config;
