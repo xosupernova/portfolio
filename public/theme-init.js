@@ -1,4 +1,7 @@
 // Early theme application (no inline script needed for CSP)
+/**
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
+ */
 (function(){
   try {
     var m=document.cookie.match(/(?:^|; )theme=([^;]+)/);

@@ -1,4 +1,7 @@
 /**
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
+ */
+/**
  * Cloudflare Worker entry for Workers Git deploy
  * - Serves static SPA assets from Assets binding
  * - Implements /api/contact (POST, with optional Turnstile + KV rate limiting)
@@ -215,7 +218,14 @@ async function handleContact(request: Request, env: Env): Promise<Response> {
 async function handleLastfm(_request: Request, env: Env): Promise<Response> {
 	const API_KEY = env.VITE_LASTFM_API_KEY || env.LASTFM_API_KEY;
 	const USER = env.VITE_LASTFM_USER || env.LASTFM_USER;
-	if (!API_KEY || !USER) return json(500, { error: 'Not configured' });
+	// If not configured, return a quiet 200 with no track to avoid noisy 500s in dev
+	if (!API_KEY || !USER)
+		return new Response(JSON.stringify({ track: null }), {
+			headers: {
+				'Content-Type': 'application/json',
+				'Cache-Control': 'no-store',
+			},
+		});
 	const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${encodeURIComponent(USER)}&api_key=${encodeURIComponent(API_KEY)}&format=json&limit=1`;
 	try {
 		const upstream = await fetch(url, {
@@ -262,7 +272,9 @@ async function handlePlacement(request: Request, env?: Env): Promise<Response> {
 	const country = (cf as { country?: string }).country || null;
 	const city = (cf as { city?: string }).city || null;
 	const ray = request.headers.get('cf-ray') || null;
-	const commit = (env?.VITE_COMMIT_SHA || env?.COMMIT_SHA || '').slice(0, 7) || null;
+	const commit =
+		((env?.VITE_COMMIT_SHA || env?.COMMIT_SHA || '') as string).slice(0, 7) ||
+		null;
 	return new Response(
 		JSON.stringify({
 			placement: hdr || colo || 'dev',

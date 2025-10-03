@@ -1,3 +1,6 @@
+/**
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
+ */
 import type { Config } from 'tailwindcss';
 
 // Tailwind v4 config (explicit to enable class-based dark mode and content scanning)

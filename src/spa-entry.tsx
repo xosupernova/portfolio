@@ -1,3 +1,6 @@
+/**
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
+ */
 // SPA entrypoint for static Cloudflare deployment.
 // Mounts the TanStack Router app client-side (no SSR shell HTML wrapping).
 import { RouterProvider } from '@tanstack/react-router';

@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+/**
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
+ */
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import https from 'node:https';

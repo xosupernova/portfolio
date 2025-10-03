@@ -25,7 +25,6 @@ id = "774fcd06999c4941addc72d16aa46280"
 
 [vars]
 # Any non-secret vars (client-exposed must be prefixed VITE_*)
-# Optionally set VITE_COMMIT_SHA via CI or Cloudflare vars to surface the commit hash in the footer
 LASTFM_USER = "xo_supernova" # non-secret username for Last.fm proxy
 VITE_APP_TITLE = "Nova Bowley"
 VITE_APP_URL = "https://n0va.dev"

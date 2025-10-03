@@ -1,5 +1,5 @@
 /**
-*  © 2025 Nova Bowley. All rights reserved.
+*  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
 */
 // Cloudflare Pages Function: /api/contact (POST)
 // Handles contact form submissions server-side, hides Discord webhook,

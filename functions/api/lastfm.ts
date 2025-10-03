@@ -2,6 +2,9 @@
 // Hides API key from the client by performing the request server-side.
 
 /**
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
+ */
+/**
  * Cloudflare automatically injects context (env, request, etc.).
  * Using untyped param to avoid dependency on PagesFunction type here.
  */

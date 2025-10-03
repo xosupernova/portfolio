@@ -1,0 +1,33 @@
+name: Update vars (no deploy)
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  update-vars:
+    name: Compute and expose vars
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      # Make the commit SHA available during the run (used below in deploy command)
+      VITE_COMMIT_SHA: ${{ github.sha }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Compute short SHA
+        id: sha
+        run: echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Export VITE_COMMIT_SHA for subsequent steps
+        run: |
+          echo "VITE_COMMIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
+          echo "SHORT_VITE_COMMIT_SHA=${{ steps.sha.outputs.short_sha }}" >> $GITHUB_ENV
+
+      - name: Summary
+        run: |
+          echo "Commit SHA: $VITE_COMMIT_SHA" >> $GITHUB_STEP_SUMMARY
+          echo "Short SHA: $SHORT_VITE_COMMIT_SHA" >> $GITHUB_STEP_SUMMARY

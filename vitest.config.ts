@@ -1,5 +1,5 @@
 /**
-*  © 2025 Nova Bowley. All rights reserved.
+*  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
 */
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';

@@ -1,5 +1,5 @@
 /*
- *  © 2025 Nova Bowley. All rights reserved.
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
  */
 /** Radix UI module type shims */
 declare module '@radix-ui/react-navigation-menu' {

@@ -1,3 +1,6 @@
+/**
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
+ */
 // Vite config dedicated to static SPA build (no SSR, no TanStack Start plugin)
 import { fileURLToPath, URL } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';

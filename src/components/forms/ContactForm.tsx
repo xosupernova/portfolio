@@ -1,8 +1,7 @@
 /**
- *  © 2025 Nova Bowley. All rights reserved.
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
  */
 import { Icon } from '@iconify/react';
-import { useForm } from '@tanstack/react-form';
 import { useState } from 'react';
 import { z } from 'zod';
 import type { TurnstileStatus } from '@/components';
@@ -13,259 +12,229 @@ interface ContactFormProps {
 	turnstileBypass?: boolean;
 }
 
-// Move schema outside component to avoid recreation on each render
+// Schema for final submit validation
 const contactSchema = z.object({
 	name: z.string().trim().min(1, 'Name required'),
 	email: z.string().trim().min(1, 'Email required').email('Invalid email'),
 	subject: z.string().trim().min(1, 'Subject required'),
 	message: z.string().trim().min(10, 'Min 10 chars'),
-	turnstileToken: z.string().optional(),
 });
+
+type Values = z.infer<typeof contactSchema>;
+type Errors = Partial<Record<keyof Values, string>>;
 
 export function ContactForm({
 	turnstileSiteKey,
 	turnstileBypass,
 }: ContactFormProps) {
-	const [submitted, setSubmitted] = useState(false);
+	const [values, setValues] = useState<Values>({
+		name: '',
+		email: '',
+		subject: '',
+		message: '',
+	});
+	const [errors, setErrors] = useState<Errors>({});
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
 	const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 	const [turnstileStatus, setTurnstileStatus] =
 		useState<TurnstileStatus>('idle');
 
-	// Lightweight inline validators to reduce zod cost per keystroke
-	// Debounced (microtask) validators: schedule minimal work; if user types quickly, only last value validates.
-	function debounceValidator(fn: (value: string) => string | undefined) {
-		let frame: number | null = null;
-		let latestValue: string = '';
-		let latestResult: string | undefined;
-		return (value: string) => {
-			latestValue = value;
-			if (frame) cancelAnimationFrame(frame);
-			frame = requestAnimationFrame(() => {
-				latestResult = fn(latestValue);
-			});
-			return latestResult;
-		};
-	}
-
-	const validators = {
-		name: debounceValidator((value: string) =>
-			value.trim().length === 0 ? 'Name required' : undefined,
-		),
-		email: debounceValidator((value: string) => {
-			if (value.trim().length === 0) return 'Email required';
-			return /.+@.+\..+/.test(value) ? undefined : 'Invalid email';
-		}),
-		subject: debounceValidator((value: string) =>
-			value.trim().length === 0 ? 'Subject required' : undefined,
-		),
-		message: debounceValidator((value: string) =>
-			value.trim().length < 10 ? 'Min 10 chars' : undefined,
-		),
+	const validateField = (
+		name: keyof Values,
+		value: string,
+	): string | undefined => {
+		switch (name) {
+			case 'name':
+				return value.trim().length === 0 ? 'Name required' : undefined;
+			case 'email':
+				if (value.trim().length === 0) return 'Email required';
+				return /.+@.+\..+/.test(value) ? undefined : 'Invalid email';
+			case 'subject':
+				return value.trim().length === 0 ? 'Subject required' : undefined;
+			case 'message':
+				return value.trim().length < 10 ? 'Min 10 chars' : undefined;
+		}
 	};
 
-	const form = useForm({
-		defaultValues: {
-			name: '',
-			email: '',
-			subject: '',
-			message: '',
-			turnstileToken: '',
-		},
-		// Avoid running full form-level validation every change; field validators handle it.
-		validators: {},
-		onSubmit: async ({ value, formApi }) => {
-			const parsed = contactSchema.safeParse(value);
-			if (!parsed.success) {
-				setErrorMsg(parsed.error.issues[0]?.message || 'Validation error');
+	const handleChange = (field: keyof Values) => (value: string) => {
+		setValues((v) => ({ ...v, [field]: value }));
+		const err = validateField(field, value);
+		setErrors((e) => ({ ...e, [field]: err }));
+	};
+
+	const canSubmit =
+		Object.values(values).every((v) => v.trim().length > 0) &&
+		Object.values(errors).every((e) => !e);
+
+	async function onSubmit(e: React.FormEvent) {
+		e.preventDefault();
+		setIsSubmitted(true);
+		const parsed = contactSchema.safeParse(values);
+		if (!parsed.success) {
+			const first = parsed.error.issues[0];
+			setErrorMsg(first?.message || 'Validation error');
+			// map zod errors into field errors
+			const fieldErrors: Errors = {};
+			for (const issue of parsed.error.issues) {
+				const k = issue.path[0];
+				if (typeof k === 'string')
+					fieldErrors[k as keyof Values] = issue.message;
+			}
+			setErrors((prev) => ({ ...prev, ...fieldErrors }));
+			return;
+		}
+
+		if (
+			turnstileSiteKey &&
+			!turnstileBypass &&
+			turnstileStatus === 'rendered' &&
+			!turnstileToken
+		) {
+			setErrorMsg('Please complete the Turnstile challenge.');
+			return;
+		}
+
+		setErrorMsg(null);
+		setIsSubmitting(true);
+		try {
+			const payload = { ...values, turnstileToken: turnstileToken || '' };
+			const res = await fetch('/api/contact', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(payload),
+			});
+			if (!res.ok) {
+				const data = await res.json().catch(() => null);
+				if (res.status === 429 && data?.retryAfter) {
+					setErrorMsg(
+						`Rate limited. Please wait ${data.retryAfter}s before retrying.`,
+					);
+				} else {
+					setErrorMsg(data?.error || `Error ${res.status}`);
+				}
 				return;
 			}
-			setErrorMsg(null);
-			try {
-				const payload = { ...value, turnstileToken: turnstileToken || '' };
-				const res = await fetch('/api/contact', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(payload),
-				});
-				if (!res.ok) {
-					const data = await res.json().catch(() => null);
-					if (res.status === 429 && data?.retryAfter) {
-						setErrorMsg(
-							`Rate limited. Please wait ${data.retryAfter}s before retrying.`,
-						);
-						return;
-					}
-					setErrorMsg(data?.error || `Error ${res.status}`);
-					return;
-				}
-				setSubmitted(true);
-				// Fire a custom event so a global toast handler can listen
-				window.dispatchEvent(
-					new CustomEvent('contact:success', { detail: { name: value.name } }),
-				);
-				setTimeout(() => setSubmitted(false), 5000);
-				formApi.reset();
-				setTurnstileToken(null);
-			} catch (err) {
-				console.error(err);
-				setErrorMsg('Failed to send message. Please try again later.');
-			}
-		},
-	});
+			// success
+			window.dispatchEvent(
+				new CustomEvent('contact:success', { detail: { name: values.name } }),
+			);
+			setValues({ name: '', email: '', subject: '', message: '' });
+			setErrors({});
+			setTurnstileToken(null);
+		} catch (err) {
+			console.error(err);
+			setErrorMsg('Failed to send message. Please try again later.');
+		} finally {
+			setIsSubmitting(false);
+		}
+	}
 
 	return (
-		<form
-			onSubmit={(e) => {
-				e.preventDefault();
-				form.handleSubmit();
-			}}
-			className="relative space-y-10"
-			noValidate
-		>
+		<form onSubmit={onSubmit} className="relative space-y-10" noValidate>
 			<div className="grid md:grid-cols-2 gap-8">
-				<form.Field
-					name="name"
-					validators={{
-						onChange: ({ value }) => validators.name(value),
-					}}
-				>
-					{(field) => (
-						<div className="flex flex-col gap-2">
-							<Label htmlFor={field.name} className="flex items-center gap-2">
-								Name
-							</Label>
-							<Input
-								id={field.name}
-								value={field.state.value}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									field.handleChange(e.target.value)
-								}
-								onBlur={field.handleBlur}
-								placeholder="Your name"
-								aria-invalid={field.state.meta.errors.length > 0}
-							/>
-							{field.state.meta.errors[0] && (
-								<p className="text-xs text-rose-500 flex items-center gap-1">
-									<Icon icon="line-md:alert-circle" />{' '}
-									{field.state.meta.errors[0]}
-								</p>
-							)}
-						</div>
+				<div className="flex flex-col gap-2">
+					<Label htmlFor="name" className="flex items-center gap-2">
+						Name
+					</Label>
+					<Input
+						id="name"
+						value={values.name}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+							handleChange('name')(e.target.value)
+						}
+						placeholder="Your name"
+						aria-invalid={Boolean(errors.name)}
+					/>
+					{errors.name && (
+						<p className="text-xs text-rose-500 flex items-center gap-1">
+							<Icon icon="line-md:alert-circle" /> {errors.name}
+						</p>
 					)}
-				</form.Field>
+				</div>
 
-				<form.Field
-					name="email"
-					validators={{
-						onChange: ({ value }) => validators.email(value),
-					}}
-				>
-					{(field) => (
-						<div className="flex flex-col gap-2">
-							<Label htmlFor={field.name}>Email</Label>
-							<Input
-								id={field.name}
-								type="email"
-								value={field.state.value}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									field.handleChange(e.target.value)
-								}
-								onBlur={field.handleBlur}
-								placeholder="you@example.com"
-								aria-invalid={field.state.meta.errors.length > 0}
-							/>
-							{field.state.meta.errors[0] && (
-								<p className="text-xs text-rose-500 flex items-center gap-1">
-									<Icon icon="line-md:alert-circle" />{' '}
-									{field.state.meta.errors[0]}
-								</p>
-							)}
-						</div>
+				<div className="flex flex-col gap-2">
+					<Label htmlFor="email">Email</Label>
+					<Input
+						id="email"
+						type="email"
+						value={values.email}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+							handleChange('email')(e.target.value)
+						}
+						placeholder="you@example.com"
+						aria-invalid={Boolean(errors.email)}
+					/>
+					{errors.email && (
+						<p className="text-xs text-rose-500 flex items-center gap-1">
+							<Icon icon="line-md:alert-circle" /> {errors.email}
+						</p>
 					)}
-				</form.Field>
+				</div>
 
-				<form.Field
-					name="subject"
-					validators={{
-						onChange: ({ value }) => validators.subject(value),
-					}}
-				>
-					{(field) => (
-						<div className="flex flex-col gap-2 md:col-span-2">
-							<Label htmlFor={field.name}>Subject</Label>
-							<Input
-								id={field.name}
-								value={field.state.value}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									field.handleChange(e.target.value)
-								}
-								onBlur={field.handleBlur}
-								placeholder="What is this about?"
-								aria-invalid={field.state.meta.errors.length > 0}
-							/>
-							{field.state.meta.errors[0] && (
-								<p className="text-xs text-rose-500 flex items-center gap-1">
-									<Icon icon="line-md:alert-circle" />{' '}
-									{field.state.meta.errors[0]}
-								</p>
-							)}
-						</div>
+				<div className="flex flex-col gap-2 md:col-span-2">
+					<Label htmlFor="subject">Subject</Label>
+					<Input
+						id="subject"
+						value={values.subject}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+							handleChange('subject')(e.target.value)
+						}
+						placeholder="What is this about?"
+						aria-invalid={Boolean(errors.subject)}
+					/>
+					{errors.subject && (
+						<p className="text-xs text-rose-500 flex items-center gap-1">
+							<Icon icon="line-md:alert-circle" /> {errors.subject}
+						</p>
 					)}
-				</form.Field>
+				</div>
 			</div>
 
-			<form.Field
-				name="message"
-				validators={{
-					onChange: ({ value }) => validators.message(value),
-				}}
-			>
-				{(field) => (
-					<div className="flex flex-col gap-2">
-						<Label htmlFor={field.name}>Message</Label>
-						<Textarea
-							id={field.name}
-							rows={7}
-							value={field.state.value}
-							onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-								field.handleChange(e.target.value)
-							}
-							onBlur={field.handleBlur}
-							placeholder="Tell me what's on your mind..."
-							aria-invalid={field.state.meta.errors.length > 0}
-						/>
-						{field.state.meta.errors[0] && (
-							<p className="text-xs text-rose-500 flex items-center gap-1">
-								<Icon icon="line-md:alert-circle" />{' '}
-								{field.state.meta.errors[0]}
-							</p>
-						)}
-					</div>
+			<div className="flex flex-col gap-2">
+				<Label htmlFor="message">Message</Label>
+				<Textarea
+					id="message"
+					rows={7}
+					value={values.message}
+					onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+						handleChange('message')(e.target.value)
+					}
+					placeholder="Tell me what's on your mind..."
+					aria-invalid={Boolean(errors.message)}
+				/>
+				{errors.message && (
+					<p className="text-xs text-rose-500 flex items-center gap-1">
+						<Icon icon="line-md:alert-circle" /> {errors.message}
+					</p>
 				)}
-			</form.Field>
+			</div>
 
 			<div className="flex flex-wrap items-center gap-5">
 				<Button
 					type="submit"
-					disabled={Boolean(
-						!form.state.canSubmit ||
-							form.state.isSubmitting ||
-							(turnstileSiteKey &&
+					disabled={
+						!canSubmit ||
+						isSubmitting ||
+						Boolean(
+							turnstileSiteKey &&
 								!turnstileBypass &&
 								turnstileStatus === 'rendered' &&
-								!turnstileToken),
-					)}
+								!turnstileToken,
+						)
+					}
 					className="min-w-40 relative"
 				>
-					{form.state.isSubmitting && (
+					{isSubmitting && (
 						<Icon
 							icon="line-md:loading-twotone-loop"
 							className="absolute left-4 text-xl"
 						/>
 					)}
-					<span className={form.state.isSubmitting ? 'opacity-60' : ''}>
-						{form.state.isSubmitting ? 'Sending' : 'Send Message'}
+					<span className={isSubmitting ? 'opacity-60' : ''}>
+						{isSubmitting ? 'Sending' : 'Send Message'}
 					</span>
 				</Button>
 				<TurnstileWidget
@@ -278,17 +247,16 @@ export function ContactForm({
 					className="w-full space-y-1"
 					localFallback={!turnstileSiteKey}
 				/>
-				{/* Success toast now handled globally */}
 				{errorMsg && (
 					<span className="inline-flex items-center gap-2 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400 px-4 py-1.5 text-sm font-medium border border-rose-500/30 animate-in fade-in max-w-full">
 						<Icon icon="line-md:alert" className="text-lg" /> {errorMsg}
 					</span>
 				)}
 				<div className="text-xs opacity-60" aria-live="polite">
-					{!submitted &&
-						form.state.isSubmitted &&
-						!form.state.isSubmitting &&
-						!form.state.canSubmit &&
+					{!isSubmitted &&
+						isSubmitted &&
+						!isSubmitting &&
+						!canSubmit &&
 						'Please fix the errors above.'}
 				</div>
 			</div>

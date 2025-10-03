@@ -1,5 +1,5 @@
 /**
- *  © 2025 Nova Bowley. All rights reserved.
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
  */
 import { createRouter as createTanstackRouter } from '@tanstack/react-router';
 // SSR/standard app router: always use the generated route tree.

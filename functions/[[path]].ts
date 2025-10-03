@@ -1,3 +1,6 @@
+/**
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
+ */
 type PagesFunction = (ctx: {
   request: Request;
   next: () => Promise<Response>;

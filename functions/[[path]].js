@@ -1,3 +1,6 @@
+/**
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
+ */
 export async function onRequest(context) {
   const res = await context.next();
   const ct = res.headers.get('content-type') || '';

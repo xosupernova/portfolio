@@ -1,3 +1,6 @@
+/**
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
+ */
 import { defineConfig } from 'vite';
 
 export default defineConfig({

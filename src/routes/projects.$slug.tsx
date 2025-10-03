@@ -1,6 +1,6 @@
 // @ts-nocheck
 /**
- *  © 2025 Nova Bowley. All rights reserved.
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
  */
 
 import { createFileRoute, useLoaderData } from '@tanstack/react-router';

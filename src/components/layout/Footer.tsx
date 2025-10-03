@@ -1,5 +1,5 @@
 /**
- *  © 2025 Nova Bowley. All rights reserved.
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
  */
 import { Icon } from '@iconify/react';
 import { useEffect, useMemo, useState } from 'react';
@@ -50,9 +50,14 @@ export function Footer() {
 		let aborted = false;
 		(async () => {
 			try {
-				const res = await fetch('/api/placement', { headers: { Accept: 'application/json' } });
+				const res = await fetch('/api/placement', {
+					headers: { Accept: 'application/json' },
+				});
 				if (!res.ok) throw new Error(String(res.status));
-				const json = (await res.json()) as { placement?: string; commit?: string };
+				const json = (await res.json()) as {
+					placement?: string;
+					commit?: string;
+				};
 				if (!aborted) {
 					setPlacement(json?.placement || 'dev');
 					setCommit(json?.commit || null);
@@ -65,29 +70,60 @@ export function Footer() {
 			aborted = true;
 		};
 	}, []);
+
+	// If commit wasn't provided by the Worker/env, try public GitHub API as a fallback
+	useEffect(() => {
+		let aborted = false;
+		(async () => {
+			if (commit || !env.VITE_REPO_URL) return;
+			try {
+				const u = new URL(env.VITE_REPO_URL);
+				const parts = u.pathname.replace(/^\/+|\/+$/g, '').split('/');
+				if (parts.length < 2) return;
+				const owner = parts[0];
+				const repo = parts[1];
+				const commitsRes = await fetch(
+					`https://api.github.com/repos/${owner}/${repo}/commits?per_page=1`,
+					{ headers: { Accept: 'application/vnd.github+json' } },
+				);
+				if (!commitsRes.ok) return;
+				const commits = (await commitsRes.json()) as Array<{ sha?: string }>;
+				const full = commits?.[0]?.sha || '';
+				if (!aborted && full) setCommit(full.slice(0, 7));
+			} catch {}
+		})();
+		return () => {
+			aborted = true;
+		};
+	}, [commit]);
 	return (
 		<footer className="w-full fixed left-0 bottom-0 z-50 bg-[#232a32]/95 backdrop-blur text-white py-6 text-center text-sm select-none">
 			{/* Edge placement and commit in the footer corner */}
-			<div className="absolute right-2 bottom-2 sm:right-3 sm:bottom-3 text-xs opacity-60 hover:opacity-100 transition-opacity">
+			<div className="absolute right-2 bottom-2 sm:right-3 sm:bottom-3 text-xs opacity-60 hover:opacity-100 transition-opacity flex items-center gap-2">
+				{commit && env.VITE_REPO_URL ? (
+					<a
+						className="font-mono underline decoration-dotted decoration-1"
+						href={`${env.VITE_REPO_URL.replace(/\/$/, '')}/commit/${commit}`}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						Commit: {commit}
+					</a>
+				) : commit ? (
+					<button
+						type="button"
+						title="Copy commit hash"
+						className="font-mono opacity-80 hover:opacity-100"
+						onClick={() =>
+							navigator.clipboard?.writeText(commit).catch(() => {})
+						}
+					>
+						Commit: {commit}
+					</button>
+				) : null}
 				<span className="font-mono">Edge: {placement}</span>
-				{commit && (
-					env.VITE_REPO_URL ? (
-						<a
-							className="font-mono ml-2 underline decoration-dotted decoration-1"
-							href={`${env.VITE_REPO_URL.replace(/\/$/, '')}/commit/${commit}`}
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							Commit: {commit}
-						</a>
-					) : (
-						<span className="font-mono ml-2">Commit: {commit}</span>
-					)
-				)}
 			</div>
-			<div className="mb-2">
-				&copy; 2024 - {currentYear} Nova Bowley. All rights reserved
-			</div>
+			<div className="mb-2">&copy; 2024 - {currentYear} Nova Bowley</div>
 			<div className="mb-2 flex justify-center items-center gap-2">
 				<span>Powered by</span>
 				<span className="flex items-center gap-2 italic">

@@ -1,3 +1,6 @@
+/**
+ *  © 2025 Nova Bowley. Licensed under the MIT License. See LICENSE.
+ */
 // Barrel exports for organized component structure
 
 export * from './forms/ContactForm';
