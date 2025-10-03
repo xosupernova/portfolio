@@ -117,9 +117,9 @@ Notes & gotchas
 
 Licensing
 ---------
-- Code is licensed under the MIT License. See `LICENSE`.
-- Site content and branding are All Rights Reserved. See `LICENSE-CONTENT.txt`.
-- Third‑party licenses are listed in `NOTICE`.
+- Code is licensed under the MIT License. See `LICENSE.md`.
+- Site content and branding are All Rights Reserved. See `LICENSE-CONTENT.md`.
+- Third‑party licenses are listed in `NOTICE.md`.
 
 Folder map (high level)
 -----------------------
